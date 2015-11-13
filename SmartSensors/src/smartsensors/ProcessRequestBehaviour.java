@@ -9,15 +9,13 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
-public class ControllerBehaviour extends CyclicBehaviour
+public class ProcessRequestBehaviour extends CyclicBehaviour
 {
     private Agent agente;
     
-    public ControllerBehaviour(Agent a)
+    public ProcessRequestBehaviour(Agent a)
     {
         agente = a;
     }
@@ -43,7 +41,7 @@ public class ControllerBehaviour extends CyclicBehaviour
         
         if (msg != null)
         {
-            System.out.println("Receiver message from "+msg.getSender()+". Content: "+msg.getContent());
+            System.out.println("Received message from "+msg.getSender()+". Content: "+msg.getContent());
 
             DFAgentDescription dfd = new DFAgentDescription();
             ServiceDescription sd  = new ServiceDescription();
@@ -58,6 +56,7 @@ public class ControllerBehaviour extends CyclicBehaviour
                     for (DFAgentDescription dfad : result)
                         System.out.println("\n" + dfad.getName() );
             } catch (FIPAException ex) { ex.printStackTrace(); }
+            
             
             sendMsg("interface", msg.getConversationId(), msg.getContent());
         }

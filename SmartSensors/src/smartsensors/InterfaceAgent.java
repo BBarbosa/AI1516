@@ -1,4 +1,5 @@
 package smartsensors;
+
 import jade.core.Agent;
 import jade.core.behaviours.ParallelBehaviour;
 
@@ -8,7 +9,7 @@ public class InterfaceAgent extends Agent
     protected void setup()
     {
         super.setup();
-        System.out.println(this.getLocalName()+" a começar!");
+        System.out.println(this.getLocalName()+" starting!");
         
         ParallelBehaviour par = new ParallelBehaviour(this, ParallelBehaviour.WHEN_ANY);
         par.addSubBehaviour(new InterfaceRequesterBehaviour(this));
@@ -22,6 +23,6 @@ public class InterfaceAgent extends Agent
     {
        super.takeDown();
        
-       System.out.println(this.getLocalName() + "a morrer...");  
+       System.out.println(this.getLocalName() + " exiting...");  
     }
 }

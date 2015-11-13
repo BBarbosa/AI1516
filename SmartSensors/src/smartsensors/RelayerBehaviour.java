@@ -5,11 +5,11 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 
-public class InterfaceReceiverBehaviour extends CyclicBehaviour
+public class RelayerBehaviour extends CyclicBehaviour
 {
     private Agent agente;
     
-    public InterfaceReceiverBehaviour(Agent a)
+    public RelayerBehaviour(Agent a)
     {
         agente = a;
     }

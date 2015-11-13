@@ -42,5 +42,4 @@ public class InterfaceRequesterBehaviour extends CyclicBehaviour
         
         block();
     }
-    
 }

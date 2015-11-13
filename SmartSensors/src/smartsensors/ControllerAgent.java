@@ -9,9 +9,13 @@ public class ControllerAgent extends Agent {
     protected void setup()
     {
         super.setup();
-        System.out.println(this.getLocalName()+" a começar!");
+        System.out.println(this.getLocalName()+" starting!");
         
-        this.addBehaviour(new ControllerBehaviour(this));
+        ParallelBehaviour par = new ParallelBehaviour(this, ParallelBehaviour.WHEN_ANY);
+        par.addSubBehaviour(new ProcessRequestBehaviour(this));
+        par.addSubBehaviour(new RelayerBehaviour(this));
+        
+        this.addBehaviour(par);
     }
     
     @Override
@@ -19,7 +23,6 @@ public class ControllerAgent extends Agent {
     {
        super.takeDown();
        
-       System.out.println(this.getLocalName() + "a morrer...");  
+       System.out.println(this.getLocalName() + " exiting...");  
     }
-    
 }
