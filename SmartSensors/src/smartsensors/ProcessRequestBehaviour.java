@@ -9,6 +9,8 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class ProcessRequestBehaviour extends CyclicBehaviour
@@ -20,16 +22,21 @@ public class ProcessRequestBehaviour extends CyclicBehaviour
         agente = a;
     }
     
-    private void sendMsg(String agentName, String convoId, String line)
+    private String getAgentName(String s, String prefix)
+    {
+        return s.replaceFirst(prefix,"");
+    }
+    
+    private void sendMsg(String agentName, String convoId, String line, int performative )
     {
         AID receiver = new AID();
         receiver.setLocalName(agentName);
 
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        ACLMessage msg = new ACLMessage(performative);
         msg.setConversationId(convoId);
         msg.addReceiver(receiver);
 
-        msg.setContent("receiver");
+        msg.setContent(line);
 
         myAgent.send(msg);
     }
@@ -43,22 +50,35 @@ public class ProcessRequestBehaviour extends CyclicBehaviour
         {
             System.out.println("Received message from "+msg.getSender()+". Content: "+msg.getContent());
 
-            DFAgentDescription dfd = new DFAgentDescription();
-            ServiceDescription sd  = new ServiceDescription();
-            sd.setType("temp_sensor");
-            dfd.addServices(sd);
+            // clears whitespaces
+            String line = msg.getContent();
+            Pattern r = Pattern.compile("\\s+");
+            Matcher m = r.matcher(line);
+            line = m.replaceAll("");
             
-            DFAgentDescription[] result;
-            try
-            {
-                result = DFService.search(agente, dfd);
-                if (result.length>0)
-                    for (DFAgentDescription dfad : result)
-                        System.out.println("\n" + dfad.getName() );
-            } catch (FIPAException ex) { ex.printStackTrace(); }
-            
-            
-            sendMsg("interface", msg.getConversationId(), msg.getContent());
+            if (line.contains("scan"))
+            {                
+                DFAgentDescription dfd = new DFAgentDescription();
+                ServiceDescription sd  = new ServiceDescription();
+                sd.setType("temp_sensor");
+                dfd.addServices(sd);
+
+                DFAgentDescription[] result;
+                try
+                {
+                    result = DFService.search(agente, dfd);
+                    if (result.length>0)
+                        for (DFAgentDescription dfad : result)
+                            System.out.println("\n" + dfad.getName() );
+                } catch (FIPAException ex) { ex.printStackTrace(); }
+
+
+                sendMsg("interface", msg.getConversationId(), msg.getContent(), ACLMessage.INFORM);
+            }
+            else if (line.contains("online"))
+                sendMsg(getAgentName(line,"online"), msg.getConversationId(), "online", ACLMessage.REQUEST);
+            else if (line.contains("offline"))
+                sendMsg(getAgentName(line,"offline"), msg.getConversationId(), "offline", ACLMessage.REQUEST);
         }
         
         block();
