@@ -8,20 +8,22 @@ import jade.lang.acl.MessageTemplate;
 
 public class InterfaceRequesterBehaviour extends CyclicBehaviour
 {
+    private Integer currentConvoId;
     private Agent agente;
     
     public InterfaceRequesterBehaviour(Agent a)
     {
+        currentConvoId = 0;
         agente = a;
     }
     
-    private void sendMsg(String agentName, String convoId, String msgContent)
+    private void sendMsg(String agentName, String msgContent)
     {
         AID receiver = new AID();
         receiver.setLocalName(agentName);
 
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-        msg.setConversationId(convoId);
+        msg.setConversationId(++currentConvoId+"");
         msg.addReceiver(receiver);
 
         msg.setContent(msgContent);
@@ -36,8 +38,8 @@ public class InterfaceRequesterBehaviour extends CyclicBehaviour
 
         if (msg != null)
         {
-            System.out.println("Sending message to controller");
-            sendMsg("controller", msg.getConversationId(), msg.getContent());
+            sendMsg("controller", msg.getContent());
+            System.out.println("Sending message with id "+currentConvoId+" to controller");
         }
         
         block();

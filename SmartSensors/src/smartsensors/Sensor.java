@@ -35,7 +35,7 @@ public class Sensor extends Agent
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setName(getLocalName());
-        sd.setType("temp_sensor");
+        sd.setType("temp");
         dfd.addServices(sd);
 
         try{ DFService.register(this, dfd );}

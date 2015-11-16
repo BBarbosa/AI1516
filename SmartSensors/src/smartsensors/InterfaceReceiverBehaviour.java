@@ -4,6 +4,7 @@ import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import static jade.lang.acl.MessageTemplate.or;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
@@ -17,12 +18,13 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     @Override
     public void action()
     {
-        ACLMessage msg = agente.receive(
-                MessageTemplate.MatchPerformative( ACLMessage.INFORM ));
+        ACLMessage msg = agente.receive( or(
+                MessageTemplate.MatchPerformative( ACLMessage.INFORM ),
+                MessageTemplate.MatchPerformative( ACLMessage.FAILURE )));
 
         if (msg != null)
         {
-            System.out.println("Request "+msg.getConversationId()+" result: "+msg.getContent());
+            System.out.println("Request "+msg.getConversationId()+" done. "+msg.getContent()+"\n*\n");
         }
         
         block();

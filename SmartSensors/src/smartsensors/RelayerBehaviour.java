@@ -1,9 +1,11 @@
 package smartsensors;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import static jade.lang.acl.MessageTemplate.or;
 
 public class RelayerBehaviour extends CyclicBehaviour
 {
@@ -14,15 +16,36 @@ public class RelayerBehaviour extends CyclicBehaviour
         agente = a;
     }
 
+    private void sendMsg(String agentName, String convoId, String msgContent)
+    {
+        AID receiver = new AID();
+        receiver.setLocalName(agentName);
+
+        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        msg.addReceiver(receiver);
+
+        msg.setContent(msgContent);
+
+        myAgent.send(msg);
+    }
+    
     @Override
     public void action()
     {
         ACLMessage msg = agente.receive(
-                MessageTemplate.MatchPerformative( ACLMessage.INFORM ));
+            or(
+                or( MessageTemplate.MatchPerformative( ACLMessage.INFORM ),
+                    MessageTemplate.MatchPerformative( ACLMessage.NOT_UNDERSTOOD )),
+                or( MessageTemplate.MatchPerformative( ACLMessage.CONFIRM ),
+                    MessageTemplate.MatchPerformative( ACLMessage.FAILURE ))
+                ));
 
-        if (msg != null)
+        if (msg != null && ControllerAgent.convoIds.contains(msg.getConversationId()))
         {
-            System.out.println("Request "+msg.getConversationId()+" result: "+msg.getContent());
+            System.out.println("Relaying request "+msg.getConversationId()+". Status: "+msg.getPerformative());
+            ControllerAgent.convoIds.remove(msg.getConversationId());
+            
+            sendMsg("interface", msg.getConversationId(), msg.getContent());
         }
         
         block();
