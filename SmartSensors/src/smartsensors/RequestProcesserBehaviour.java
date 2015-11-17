@@ -9,6 +9,7 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -57,19 +58,53 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
             String[] tokens = msg.getContent().split(delims);
             String agentName = tokens[0];
             
-            // check available agents
+            // check available agents for each type
+            String availableAgents = "";
             DFAgentDescription dfd = new DFAgentDescription();
             ServiceDescription sd  = new ServiceDescription();
+            
             sd.setType("temp");
             dfd.addServices(sd);
-
+            
             DFAgentDescription[] result = null;
             try
             {
                 result = DFService.search(agente, dfd);
             } catch (FIPAException ex) { ex.printStackTrace(); }
 
-            String availableAgents = "";
+            if (result != null && result.length>0)
+                for (DFAgentDescription dfad : result)
+                    availableAgents += "\n"+dfad.getName();
+            
+            sd.setType("humi");
+            dfd.addServices(sd);      
+            try
+            {
+                result = DFService.search(agente, dfd);
+            } catch (FIPAException ex) { ex.printStackTrace(); }
+
+            if (result != null && result.length>0)
+                for (DFAgentDescription dfad : result)
+                    availableAgents += "\n"+dfad.getName();
+            
+            sd.setType("mov");
+            dfd.addServices(sd);      
+            try
+            {
+                result = DFService.search(agente, dfd);
+            } catch (FIPAException ex) { ex.printStackTrace(); }
+
+            if (result != null && result.length>0)
+                for (DFAgentDescription dfad : result)
+                    availableAgents += "\n"+dfad.getName();
+            
+            sd.setType("lumi");
+            dfd.addServices(sd);      
+            try
+            {
+                result = DFService.search(agente, dfd);
+            } catch (FIPAException ex) { ex.printStackTrace(); }
+
             if (result != null && result.length>0)
                 for (DFAgentDescription dfad : result)
                     availableAgents += "\n"+dfad.getName();

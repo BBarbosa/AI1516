@@ -24,7 +24,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
 
         if (msg != null)
         {
-            System.out.println("Request "+msg.getConversationId()+" done. "+msg.getContent()+"\n*\n");
+            System.out.println("Request "+msg.getConversationId()+" done. \n"+msg.getContent()+"\n*\n");
         }
         
         block();

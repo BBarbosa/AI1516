@@ -1,17 +1,24 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package smartsensors;
-
-import java.util.Random;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
-import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import java.util.Random;
 
-public class Sensor extends Agent 
-{
+/**
+ *
+ * @author andregeraldes
+ */
+public class Humidity extends Agent {
     private boolean sensorState = false;
     private boolean finished = false;
 
@@ -35,7 +42,7 @@ public class Sensor extends Agent
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setName(getLocalName());
-        sd.setType("temp");
+        sd.setType("humi");
         dfd.addServices(sd);
 
         try{ DFService.register(this, dfd );}
@@ -114,24 +121,16 @@ public class Sensor extends Agent
 
                     if (msg.getContent().equals("value"))
                     {
-                        System.out.println(isSensorState());
                         if (isSensorState())
                         {
-                            //int randomNum = Math.abs(new Random().nextInt() % 100);
-                            int randomNum = new Random().nextInt(100);
-                            if (randomNum < 10)
+                            int randomNum = new Random().nextInt(130);
+                            if (randomNum > 100)
                             {
                                 reply.setContent("XXXXX");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
-                            else if (randomNum >= 10 && randomNum < 20)
-                            {
-                                reply.setContent(-randomNum+"");
-                                reply.setPerformative(ACLMessage.INFORM);
-                                myAgent.send(reply);
-                            }
-                            else if (randomNum >= 20 && randomNum < 90)
+                            else if (randomNum >= 0 && randomNum <= 100)
                             {
                                 reply.setContent(randomNum+"");
                                 reply.setPerformative(ACLMessage.INFORM);
