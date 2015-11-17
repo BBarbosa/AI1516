@@ -1,5 +1,6 @@
 package smartsensors;
 
+import jade.core.AID;
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
@@ -24,7 +25,18 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
 
         if (msg != null)
         {
-            System.out.println("Request "+msg.getConversationId()+" done. \n"+msg.getContent()+"\n*\n");
+            AID receiver = new AID();
+            receiver.setLocalName("graphic");
+
+            ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
+            msg2.setConversationId(msg.getConversationId());
+            msg2.addReceiver(receiver);
+
+            msg2.setContent("Request "+msg.getConversationId()+" done. "+msg.getContent()+"\n*\n");
+           
+            agente.send(msg2);
+            
+          
         }
         
         block();
