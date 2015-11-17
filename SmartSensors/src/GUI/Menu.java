@@ -315,7 +315,7 @@ public class Menu extends javax.swing.JFrame {
         String agentName = this.jTextField2.getText();
        //falta enviar para a interface que por sua vez envia para o controller (falta melhorar)
             AID receiver = new AID();
-            receiver.setLocalName("controller");
+            receiver.setLocalName("interface");
             ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
             msg2.setConversationId(++this.idz+"");
             msg2.addReceiver(receiver);
@@ -331,7 +331,7 @@ public class Menu extends javax.swing.JFrame {
          String agentName = this.jTextField3.getText();
         //falta enviar para a interface que por sua vez envia para o controller (falta melhorar)
             AID receiver = new AID();
-            receiver.setLocalName("controller");
+            receiver.setLocalName("interface");
             ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
             msg2.setConversationId(++this.idz+"");
             msg2.addReceiver(receiver);
