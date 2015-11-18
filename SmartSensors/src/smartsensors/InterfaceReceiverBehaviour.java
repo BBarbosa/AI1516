@@ -25,18 +25,20 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
 
         if (msg != null)
         {
+            /*
             AID receiver = new AID();
             receiver.setLocalName("graphic");
 
             ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
             msg2.setConversationId(msg.getConversationId());
             msg2.addReceiver(receiver);
-
+            
             msg2.setContent("Request "+msg.getConversationId()+" done. "+msg.getContent()+"\n*\n");
            
             agente.send(msg2);
+            */
             
-          
+            System.out.println("Request "+msg.getConversationId()+" done. \n"+msg.getContent()+"\n*\n");
         }
         
         block();

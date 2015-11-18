@@ -45,16 +45,6 @@ class MediumBehaviour extends CyclicBehaviour
        this.menu =  new Menu();
        this.menu.setAgente(agente);
        
-   }
-   
-   
-    @Override
-   public void action(){
-       this.menu.setVisible(true);
-       ACLMessage awnser = agente.receive();
-       
-       // **desenhar tabela**
-       
        // check available agents for each type
             String availableAgents = "";
             DFAgentDescription dfd = new DFAgentDescription();
@@ -129,6 +119,17 @@ class MediumBehaviour extends CyclicBehaviour
                        this.menu.getjTable1().setValueAt("State", j, i+2);  
                j++;
              }
+       
+   }
+   
+   
+    @Override
+   public void action(){
+       this.menu.setVisible(true);
+       ACLMessage awnser = agente.receive();
+       
+       // **desenhar tabela**
+       
   
        if (awnser !=  null){
          this.menu.getjTextArea1().append("Log ==> "+awnser.getContent()+"\n");

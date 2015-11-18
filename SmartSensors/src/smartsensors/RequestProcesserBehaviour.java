@@ -109,6 +109,17 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                 for (DFAgentDescription dfad : result)
                     availableAgents += "\n"+dfad.getName();
             
+            sd.setType("smoke");
+            dfd.addServices(sd);      
+            try
+            {
+                result = DFService.search(agente, dfd);
+            } catch (FIPAException ex) { ex.printStackTrace(); }
+
+            if (result != null && result.length>0)
+                for (DFAgentDescription dfad : result)
+                    availableAgents += "\n"+dfad.getName();
+            
             // if target agent is no longer availabe, inform interface agent
             if (availableAgents.contains(agentName))
             {            

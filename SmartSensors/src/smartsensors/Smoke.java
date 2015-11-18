@@ -1,19 +1,27 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package smartsensors;
-
-import java.util.Random;
 
 import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
-import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
+import java.util.Random;
 
-public class Sensor extends Agent 
-{
+/**
+ *
+ * @author andregeraldes
+ */
+public class Smoke extends Agent {
     private boolean sensorState = false;
     private boolean finished = false;
+    private int last = new Random().nextInt(100);
 
     @Override
     protected void takeDown()
@@ -35,7 +43,7 @@ public class Sensor extends Agent
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setName(getLocalName());
-        sd.setType("temp");
+        sd.setType("smoke");
         dfd.addServices(sd);
 
         try{ DFService.register(this, dfd );}
@@ -62,6 +70,14 @@ public class Sensor extends Agent
             this.finished = finished;
     }
 
+    public int getLast() {
+        return last;
+    }
+
+    public void setLast(int last) {
+        this.last = last;
+    }
+
     private class ReceiveBehaviour extends CyclicBehaviour
     {
         @Override
@@ -79,7 +95,7 @@ public class Sensor extends Agent
                         System.out.println("sensor "+myAgent.getLocalName()+" exiting...");
                         setFinished(true);
                     }
-                   
+
                     if (msg.getContent().equals("online"))
                     {
                         if (isSensorState())
@@ -116,24 +132,19 @@ public class Sensor extends Agent
                     {
                         System.out.println(isSensorState());
                         if (isSensorState())
-                        {
-                            //int randomNum = Math.abs(new Random().nextInt() % 100);
-                            int randomNum = new Random().nextInt(130);
-                            if (randomNum > 60 && randomNum < 100)
+                        {    
+                            int i = getLast() + new Random().nextInt(5) - new Random().nextInt(5);
+                            setLast(i);
+                            if (i < 0 || i > 100)
                             {
+                                setLast(new Random().nextInt(100));
                                 reply.setContent("XXXXX");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
-                            else if (randomNum >= 100 && randomNum <= 130)
+                            else if (i >= 0 && i <= 100)
                             {
-                                reply.setContent(-randomNum+100+"");
-                                reply.setPerformative(ACLMessage.INFORM);
-                                myAgent.send(reply);
-                            }
-                            else if (randomNum >= 0 && randomNum <= 60)
-                            {
-                                reply.setContent(randomNum+"");
+                                reply.setContent(i+"");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
