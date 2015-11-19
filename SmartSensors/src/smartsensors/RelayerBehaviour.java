@@ -16,12 +16,13 @@ public class RelayerBehaviour extends CyclicBehaviour
         agente = a;
     }
 
-    private void sendMsg(String agentName, String convoId, String msgContent)
+    private void sendMsg(String agentName, String convoId, String msgContent, int performative)
     {
         AID receiver = new AID();
         receiver.setLocalName(agentName);
 
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
+        ACLMessage msg = new ACLMessage(performative);
+        msg.setConversationId(convoId);
         msg.addReceiver(receiver);
         
         msg.setContent(msgContent);
@@ -44,10 +45,7 @@ public class RelayerBehaviour extends CyclicBehaviour
         {
             System.out.println("Relaying request "+msg.getConversationId()+". Status: "+msg.getPerformative());
             ControllerAgent.convoIds.remove(msg.getConversationId());
-            if(msg.getPerformative() == 6){
-                sendMsg("interface", msg.getConversationId(), msg.getSender().toString()+" offline");
-            }
-            else sendMsg("interface", msg.getConversationId(), msg.getContent());
+            sendMsg("interface", msg.getConversationId(), msg.getContent(), msg.getPerformative());
         }
         
         block();

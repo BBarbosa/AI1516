@@ -28,6 +28,9 @@ public class InterfaceRequesterBehaviour extends CyclicBehaviour
         msg.setContent(msgContent);
 
         myAgent.send(msg);
+        
+        // registers request on requestmap
+        agente.requestMap.put(currentConvoId,msg.getContent());
     }
     
     @Override

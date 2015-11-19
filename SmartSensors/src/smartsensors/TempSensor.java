@@ -70,7 +70,8 @@ public class TempSensor extends Agent
             if (msg != null) 
             {            	
                 ACLMessage reply = msg.createReply();
-
+                reply.setConversationId(msg.getConversationId());
+                
                 if (msg.getPerformative() == ACLMessage.REQUEST)
                 {
                     if (msg.getContent().equals("shutdown"))
