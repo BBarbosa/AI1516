@@ -1,7 +1,6 @@
 package smartsensors;
 
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -9,9 +8,9 @@ import jade.lang.acl.MessageTemplate;
 public class InterfaceRequesterBehaviour extends CyclicBehaviour
 {
     private Integer currentConvoId;
-    private Agent agente;
+    private InterfaceAgent agente;
     
-    public InterfaceRequesterBehaviour(Agent a)
+    public InterfaceRequesterBehaviour(InterfaceAgent a)
     {
         currentConvoId = 0;
         agente = a;
@@ -32,10 +31,16 @@ public class InterfaceRequesterBehaviour extends CyclicBehaviour
     }
     
     @Override
+    public void onStart()
+    {
+        sendMsg("controller", ".scan");
+    }
+    
+    @Override
     public void action()
     {
         ACLMessage msg = agente.receive(MessageTemplate.MatchPerformative( ACLMessage.REQUEST ));
-
+        
         if (msg != null)
         {
             sendMsg("controller", msg.getContent());

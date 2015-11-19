@@ -9,15 +9,21 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class RequestProcesserBehaviour extends CyclicBehaviour
 {
-    private Agent agente;
-    
+    private final Agent agente;
+    public enum SensorType
+    {
+        TEMP {public String toString() {return "temp";}},
+        HUMI {public String toString() {return "humi";}},
+        MOVE {public String toString() {return "move";}},
+        LUX {public String toString() {return "lux";}},
+        SMOKE {public String toString() {return "smoke";}}
+    }
+        
     public RequestProcesserBehaviour(ControllerAgent a)
     {
         agente = a;
@@ -60,65 +66,30 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
             
             // check available agents for each type
             String availableAgents = "";
-            DFAgentDescription dfd = new DFAgentDescription();
-            ServiceDescription sd  = new ServiceDescription();
             
-            sd.setType("temp");
-            dfd.addServices(sd);
-            
-            DFAgentDescription[] result = null;
-            try
+            for (SensorType st : SensorType.values())
             {
-                result = DFService.search(agente, dfd);
-            } catch (FIPAException ex) { ex.printStackTrace(); }
-
-            if (result != null && result.length>0)
-                for (DFAgentDescription dfad : result)
-                    availableAgents += "\n"+dfad.getName();
-            
-            sd.setType("humi");
-            dfd.addServices(sd);      
-            try
-            {
-                result = DFService.search(agente, dfd);
-            } catch (FIPAException ex) { ex.printStackTrace(); }
-
-            if (result != null && result.length>0)
-                for (DFAgentDescription dfad : result)
-                    availableAgents += "\n"+dfad.getName();
-            
-            sd.setType("mov");
-            dfd.addServices(sd);      
-            try
-            {
-                result = DFService.search(agente, dfd);
-            } catch (FIPAException ex) { ex.printStackTrace(); }
-
-            if (result != null && result.length>0)
-                for (DFAgentDescription dfad : result)
-                    availableAgents += "\n"+dfad.getName();
-            
-            sd.setType("lumi");
-            dfd.addServices(sd);      
-            try
-            {
-                result = DFService.search(agente, dfd);
-            } catch (FIPAException ex) { ex.printStackTrace(); }
-
-            if (result != null && result.length>0)
-                for (DFAgentDescription dfad : result)
-                    availableAgents += "\n"+dfad.getName();
-            
-            sd.setType("smoke");
-            dfd.addServices(sd);      
-            try
-            {
-                result = DFService.search(agente, dfd);
-            } catch (FIPAException ex) { ex.printStackTrace(); }
-
-            if (result != null && result.length>0)
-                for (DFAgentDescription dfad : result)
-                    availableAgents += "\n"+dfad.getName();
+                DFAgentDescription dfd = new DFAgentDescription();
+                ServiceDescription sd  = new ServiceDescription();
+                sd.setType(st.toString());
+                dfd.addServices(sd);
+                
+                DFAgentDescription[] result = null;
+                
+                try
+                {
+                    result = DFService.search(agente, dfd);
+                }
+                catch (FIPAException ex) { ex.printStackTrace(); }
+                
+                if (result != null && result.length>0)
+                {      
+                    availableAgents += "\n"+st.toString();
+                    
+                    for (DFAgentDescription dfad : result)
+                        availableAgents += "."+dfad.getName().getLocalName();
+                }
+            }
             
             // if target agent is no longer availabe, inform interface agent
             if (availableAgents.contains(agentName))

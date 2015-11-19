@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import jade.core.AID;
@@ -13,12 +8,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
-import javax.swing.JTextField;
 
-/**
- *
- * @author Firestarter
- */
 public class Menu extends javax.swing.JFrame {
     
     private Agent agente;
@@ -101,8 +91,19 @@ public class Menu extends javax.swing.JFrame {
         this.jTextArea1 = jTextArea1;
     }
 
-   
+    private void sendMsg(String msgContent)
+    {
+        AID receiver = new AID();
+        receiver.setLocalName("interface");
 
+        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        msg.addReceiver(receiver);
+
+        msg.setContent(msgContent);
+
+        agente.send(msg);
+    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -312,32 +313,11 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String agentName = this.jTextField2.getText();
-       //falta enviar para a interface que por sua vez envia para o controller (falta melhorar)
-            AID receiver = new AID();
-            receiver.setLocalName("interface");
-            ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
-            msg2.setConversationId(++this.idz+"");
-            msg2.addReceiver(receiver);
-            msg2.setContent(""+agentName+".online");
-           
-            agente.send(msg2);
-        
-
-// TODO add your handling code here:
+        sendMsg(this.jTextField2.getText()+".online");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-         String agentName = this.jTextField3.getText();
-        //falta enviar para a interface que por sua vez envia para o controller (falta melhorar)
-            AID receiver = new AID();
-            receiver.setLocalName("interface");
-            ACLMessage msg2 = new ACLMessage(ACLMessage.REQUEST);
-            msg2.setConversationId(++this.idz+"");
-            msg2.addReceiver(receiver);
-            msg2.setContent(""+agentName+".offline");
-           
-            agente.send(msg2);
+        sendMsg(this.jTextField3.getText()+".offline");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     /**

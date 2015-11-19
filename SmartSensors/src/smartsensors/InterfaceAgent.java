@@ -1,10 +1,13 @@
 package smartsensors;
 
+import GUI.Menu;
 import jade.core.Agent;
 import jade.core.behaviours.ParallelBehaviour;
 
 public class InterfaceAgent extends Agent
 {
+    public Menu menu;
+    
     @Override
     protected void setup()
     {
@@ -16,6 +19,10 @@ public class InterfaceAgent extends Agent
         par.addSubBehaviour(new InterfaceReceiverBehaviour(this));
         
         this.addBehaviour(par);
+        
+        this.menu =  new Menu();
+        this.menu.setAgente(this);
+        this.menu.setVisible(true);
     }
     
     @Override

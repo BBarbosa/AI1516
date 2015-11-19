@@ -1,7 +1,5 @@
 package smartsensors;
 
-import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -9,9 +7,9 @@ import static jade.lang.acl.MessageTemplate.or;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
-    private Agent agente;
+    private InterfaceAgent agente;
     
-    public InterfaceReceiverBehaviour(Agent a)
+    public InterfaceReceiverBehaviour(InterfaceAgent a)
     {
         agente = a;
     }
@@ -25,20 +23,25 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
 
         if (msg != null)
         {
-            /*
-            AID receiver = new AID();
-            receiver.setLocalName("graphic");
-
-            ACLMessage msg2 = new ACLMessage(ACLMessage.INFORM);
-            msg2.setConversationId(msg.getConversationId());
-            msg2.addReceiver(receiver);
+            System.out.println("Request "+msg.getConversationId()+" done. Content: "+msg.getContent()+"\n*\n");
             
-            msg2.setContent("Request "+msg.getConversationId()+" done. "+msg.getContent()+"\n*\n");
-           
-            agente.send(msg2);
-            */
-            
-            System.out.println("Request "+msg.getConversationId()+" done. \n"+msg.getContent()+"\n*\n");
+            // if scan found something
+            if (!msg.getContent().equals(""))
+            {    
+                int currentLine = 0;
+                
+                String[] agentTypes = msg.getContent().split("[\n]");
+                for (int i = 0; i < agentTypes.length; i++)
+                {
+                    String[] agentNames = agentTypes[i].split("[.]");
+                    for (int j = 1; j < agentNames.length; j++)
+                    {
+                        agente.menu.getjTable1().setValueAt(agentNames[j], currentLine + (j-1), 0);
+                        agente.menu.getjTable1().setValueAt(agentNames[0], currentLine + (j-1), 1); 
+                    }
+                    currentLine += agentNames.length - 1;
+                }
+            }
         }
         
         block();
