@@ -103,10 +103,10 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                 else if (line.contains("value"))
                     sendMsg(agentName, msg.getConversationId(), "value", ACLMessage.REQUEST);
                 else
-                    sendMsg("interface", msg.getConversationId(), "UNRECOGNIZED REQUEST", ACLMessage.INFORM);
+                    sendMsg("interface", msg.getConversationId(),"Unrecognized requested operation!", ACLMessage.NOT_UNDERSTOOD);
             }
             else
-                sendMsg("interface", msg.getConversationId(), availableAgents, ACLMessage.FAILURE);
+                sendMsg("interface", msg.getConversationId(), "Specified agent name ("+agentName+") unavailable!", ACLMessage.FAILURE);
         }
         
         block();

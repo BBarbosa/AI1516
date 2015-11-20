@@ -26,38 +26,74 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         agente.menu.getjTextArea1().setText(output);
     }
     
+    public void processScan(String content)
+    {
+        // if scan found something
+        int currentLine = 0;
+
+        String[] agentTypes = content.split("[\n]");
+        for (String at : agentTypes)
+        {
+            String[] agentNames = at.split("[.]");
+            for (int j = 1; j < agentNames.length; j++)
+            {
+                agente.menu.getjTable1().setValueAt(agentNames[j], currentLine + (j-1), 0);
+                agente.menu.getjTable1().setValueAt(agentNames[0], currentLine + (j-1), 1); 
+            }
+            currentLine += agentNames.length - 1;
+        }
+
+        printLog("Scanned Sensors!");
+    }
+    
+    public void refreshSensorValue(String content)
+    {
+        // TODO
+    }
+    
+    public void processStatus(String content)
+    {
+        String[] tokens = content.split("[.]");
+        printLog("Agent "+tokens[0]+" is now "+tokens[1]+"!");
+    }
+    
     @Override
     public void action()
     {
         ACLMessage msg = agente.receive( or(
-                MessageTemplate.MatchPerformative( ACLMessage.INFORM ),
-                MessageTemplate.MatchPerformative( ACLMessage.FAILURE )));
+            or( MessageTemplate.MatchPerformative( ACLMessage.INFORM ),
+                MessageTemplate.MatchPerformative( ACLMessage.NOT_UNDERSTOOD )),
+            or( MessageTemplate.MatchPerformative( ACLMessage.CONFIRM ),
+                MessageTemplate.MatchPerformative( ACLMessage.FAILURE ))
+            ));
 
         if (msg != null)
         {
-            System.out.println("Request "+msg.getConversationId()+" done. Content: "+msg.getContent()+"\n*\n");
-            
-            if (msg.getPerformative() == ACLMessage.FAILURE )
-                printLog("Failed request "+agente.requestMap.get(Integer.parseInt(msg.getConversationId())));
-            
-            if (msg.getContent() != null)
-            {    
-                // if scan found something
-                int currentLine = 0;
+            String requestContent = agente.requestMap.get(Integer.parseInt(msg.getConversationId()));
+            System.out.println("Request "+msg.getConversationId()+" done. Content: "+requestContent+"\n*\n");
+
+            switch (msg.getPerformative())
+            {
+                case ACLMessage.INFORM:
+                    if (requestContent.contains("scan"))
+                        processScan(msg.getContent());
+                    else
+                        refreshSensorValue(msg.getContent());
+                    break;
+                    
+                case ACLMessage.CONFIRM:
+                    processStatus(requestContent);
+                    break;
                 
-                String[] agentTypes = msg.getContent().split("[\n]");
-                for (String at : agentTypes)
-                {
-                    String[] agentNames = at.split("[.]");
-                    for (int j = 1; j < agentNames.length; j++)
-                    {
-                        agente.menu.getjTable1().setValueAt(agentNames[j], currentLine + (j-1), 0);
-                        agente.menu.getjTable1().setValueAt(agentNames[0], currentLine + (j-1), 1); 
-                    }
-                    currentLine += agentNames.length - 1;
-                }
-                
-                printLog("Scanned Sensors!");
+                case ACLMessage.FAILURE:
+                    printLog("Failed request "+msg.getConversationId()+" - "
+                            +requestContent+". Reason: "+msg.getContent());
+                    break;
+                    
+                case ACLMessage.NOT_UNDERSTOOD:
+                    printLog("Failed request "+msg.getConversationId()+" - "
+                            +requestContent+". Reason: "+msg.getContent());
+                    break;
             }
 
             agente.requestMap.remove(Integer.parseInt(msg.getConversationId()));

@@ -148,6 +148,7 @@ public class TempSensor extends Agent
                 else
                 {
                     reply.setPerformative(ACLMessage.NOT_UNDERSTOOD);
+                    reply.setContent("Unrecognized request performative. Must be ACLMessage.REQUEST!");
                     myAgent.send(reply);
                 }
             }
