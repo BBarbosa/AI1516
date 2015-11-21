@@ -6,6 +6,7 @@ import jade.lang.acl.ACLMessage;
 import java.awt.BorderLayout;
 import java.awt.Graphics;
 import java.awt.Image;
+import java.awt.Label;
 import java.awt.Toolkit;
 import java.util.Date;
 import java.util.HashMap;
@@ -16,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
 import smartsensors.InterfaceAgent;
 
 public class Menu extends javax.swing.JFrame {
@@ -33,6 +35,59 @@ public class Menu extends javax.swing.JFrame {
             label.setIcon(image);
             this.jPanel1.setLayout(null);
             this.jPanel1.add( label );
+            
+            
+  jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+    @Override
+    public void mouseClicked(java.awt.event.MouseEvent evt) {
+        Boolean flag = true;
+        int row = jTable1.rowAtPoint(evt.getPoint());
+        int col = jTable1.columnAtPoint(evt.getPoint());
+        
+       
+        if (row >= 0 && col == 2) {
+                
+            if(jTable1.getValueAt(row, col).equals(!flag)){
+                
+                System.out.println("VAI FICAR ONLINE ::: ESTA "+jTable1.getValueAt(row, col));
+                sendMsg(jTable1.getValueAt(row, 0).toString()+".online");
+                
+            }
+            if(jTable1.getValueAt(row, col).equals(flag)){
+                
+                System.out.println("VAI FICAR oFFLINE ::: ESTA "+jTable1.getValueAt(row, col));
+                sendMsg(jTable1.getValueAt(row, 0).toString()+".offline");
+            }
+
+        }
+    }
+});
+            
+            
+    }
+
+    public JTextField getjTextField2() {
+        return jTextField2;
+    }
+
+    public void setjTextField2(JTextField jTextField2) {
+        this.jTextField2 = jTextField2;
+    }
+
+    public Label getLabel1() {
+        return label1;
+    }
+
+    public void setLabel1(Label label1) {
+        this.label1 = label1;
+    }
+
+    public JLabel getjLabel1() {
+        return jLabel1;
+    }
+
+    public void setjLabel1(JLabel jLabel1) {
+        this.jLabel1 = jLabel1;
     }
     
  
@@ -118,6 +173,7 @@ public class Menu extends javax.swing.JFrame {
         agente.send(msg);
     }
     
+  
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -136,11 +192,7 @@ public class Menu extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
         jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
         jButton3 = new javax.swing.JButton();
         label1 = new java.awt.Label();
         jButton4 = new javax.swing.JButton();
@@ -225,9 +277,16 @@ public class Menu extends javax.swing.JFrame {
                 "Agent", "Type", "Status"
             }
         ) {
-            boolean[] canEdit = new boolean [] {
-                false, false, true
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Boolean.class
             };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -245,29 +304,13 @@ public class Menu extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane2.setViewportView(jTextArea1);
 
-        jTextField3.addActionListener(new java.awt.event.ActionListener() {
+        jTextField2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField3ActionPerformed(evt);
+                jTextField2ActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Turn On");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton2.setText("Turn Off");
-        jButton2.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton2ActionPerformed(evt);
-            }
-        });
-
-        jLabel1.setText("Insert the sensor's name ");
-
-        jLabel2.setText("Insert the sensor's name");
+        jLabel1.setText("label");
 
         jButton3.setText("Scan");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -297,24 +340,21 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(jScrollPane2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jTextField2)
-                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 178, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton1, javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jButton2, javax.swing.GroupLayout.Alignment.TRAILING)))
+                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                            .addComponent(jTextField2)
+                            .addGap(89, 89, 89))
+                        .addGroup(layout.createSequentialGroup()
                             .addComponent(jLabel1)
-                            .addComponent(jLabel2))
-                        .addContainerGap())
+                            .addContainerGap()))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(0, 165, Short.MAX_VALUE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE))))
                         .addGap(18, 18, 18))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(19, 19, 19)
@@ -343,33 +383,13 @@ public class Menu extends javax.swing.JFrame {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jButton1)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel2)
-                        .addGap(2, 2, 2)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jButton2)
-                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void jTextField3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField3ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField3ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        sendMsg(jTextField2.getText()+".online");
-    }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        sendMsg(jTextField3.getText()+".offline");
-    }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
         sendMsg(".scan");       
@@ -379,6 +399,10 @@ public class Menu extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jTextField2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -410,18 +434,16 @@ public class Menu extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
+                
                 new Menu().setVisible(true);
             }
         });
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;
     private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -431,7 +453,6 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JTable jTable1;
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private java.awt.Label label1;
     // End of variables declaration//GEN-END:variables
 }
