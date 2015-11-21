@@ -6,7 +6,6 @@ import jade.lang.acl.MessageTemplate;
 import static jade.lang.acl.MessageTemplate.or;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import javax.swing.JTextArea;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
@@ -49,12 +48,18 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     public void refreshSensorValue(String content)
     {
         // TODO
+        System.out.println("SENSOR VALUE: "+content);
     }
     
     public void processStatus(String content)
     {
         String[] tokens = content.split("[.]");
         printLog("Agent "+tokens[0]+" is now "+tokens[1]+"!");
+        
+        if (tokens[1].equals("online"))
+            agente.activeSensors.add(tokens[0]);
+        else
+            agente.activeSensors.remove(tokens[0]);
     }
     
     @Override
