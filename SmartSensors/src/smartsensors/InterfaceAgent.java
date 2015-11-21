@@ -18,9 +18,14 @@ public class InterfaceAgent extends Agent
         return ++currentConvoId;
     }
     
-    public synchronized void saveRequest(int id, String content)
+    public void saveRequest(int id, String content)
     {
-        requestMap.put(id,content);
+        synchronized(requestMap){requestMap.put(id,content);}
+    }
+    
+    public void removeRequest(int id)
+    {
+        synchronized(requestMap){requestMap.remove(id);}
     }
     
     @Override

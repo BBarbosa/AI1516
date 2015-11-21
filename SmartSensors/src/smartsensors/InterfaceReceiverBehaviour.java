@@ -10,7 +10,7 @@ import java.util.Date;
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
     private InterfaceAgent agente;
-    
+
     public InterfaceReceiverBehaviour(InterfaceAgent a)
     {
         agente = a;
@@ -29,7 +29,6 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     {
         // if scan found something
         int currentLine = 0;
-
         String[] agentTypes = content.split("[\n]");
         for (String at : agentTypes)
         {
@@ -40,8 +39,8 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 agente.menu.getjTable1().setValueAt(agentNames[0], currentLine + (j-1), 1); 
             }
             currentLine += agentNames.length - 1;
+            
         }
-
         printLog("Scanned Sensors!");
     }
     
@@ -72,6 +71,8 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 MessageTemplate.MatchPerformative( ACLMessage.FAILURE ))
             ));
 
+
+
         if (msg != null)
         {
             String requestContent = agente.requestMap.get(Integer.parseInt(msg.getConversationId()));
@@ -101,7 +102,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                     break;
             }
 
-            agente.requestMap.remove(Integer.parseInt(msg.getConversationId()));
+            agente.removeRequest(Integer.parseInt(msg.getConversationId()));
         }
         
         block();
