@@ -21,13 +21,11 @@ import smartsensors.InterfaceAgent;
 public class Menu extends javax.swing.JFrame {
     
     private InterfaceAgent agente;
-    private Integer idz;
     
     /**
      * Creates new form Menu
      */
     public Menu() {
-        idz = 0;
         initComponents();
         ImageIcon image = new ImageIcon("images/house_plan_1.jpg"); 
             JLabel label = new JLabel();
@@ -41,7 +39,6 @@ public class Menu extends javax.swing.JFrame {
   
     public void setAgente(InterfaceAgent a){
         this.agente = a;
-        this.idz = 0;
     }
     
     public JPanel getjPanel1() {
@@ -108,41 +105,19 @@ public class Menu extends javax.swing.JFrame {
         this.jTextArea1 = jTextArea1;
     }
 
-    private void sendMsgReq(String msgContent)
+    private void sendMsg(String msgContent)
     {
        AID receiver = new AID();
         receiver.setLocalName("interface");
 
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-        Date currentDate = new Date();
-        
-        msg.setConversationId(+currentDate.getTime() / 1000+"");
         msg.addReceiver(receiver);
 
         msg.setContent(msgContent);
 
         agente.send(msg);
-        
-        // registers request on requestmap
-        agente.requestMap.put(idz,msg.getContent());
     }
-    private void sendMsgInf(String msgContent)
-    {
-           AID receiver = new AID();
-        receiver.setLocalName("interface");
-
-        ACLMessage msg = new ACLMessage(ACLMessage.INFORM);
-        Date currentDate = new Date();
-        msg.setConversationId(+currentDate.getTime() / 1000+"");
-        msg.addReceiver(receiver);
-
-        msg.setContent(msgContent);
-
-        agente.send(msg);
-        
-        // registers request on requestmap
-        agente.requestMap.put(idz,msg.getContent());
-    }
+    
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -389,36 +364,15 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField3ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        String aux;
-        aux = this.jTextField2.getText();
-        sendMsgReq(aux+".online");
-        if(this.agente.activeAgentsBehaviour.containsKey(aux)){
-            if(this.agente.activeAgentsBehaviour.get(aux).equals("0")){
-              this.agente.activeAgentsBehaviour.put(aux, "1");
-              
-             this.jTextField2.setText("");
-            }
-        }
+        sendMsg(jTextField2.getText()+".online");
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        String aux;
-        aux = this.jTextField3.getText();
-        sendMsgReq(aux+".offline");
-        if(this.agente.activeAgentsBehaviour.containsKey(aux)){
-            if(this.agente.activeAgentsBehaviour.get(aux).equals("1")){
-              this.agente.activeAgentsBehaviour.put(aux, "0");
-              this.jTextField2.setText("");
-            }
-        }
-        
+        sendMsg(jTextField3.getText()+".offline");
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        // TODO add your handling code here:
-       
-        sendMsgReq(".scan"); 
-        
+        sendMsg(".scan");       
     }//GEN-LAST:event_jButton3ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
