@@ -45,6 +45,12 @@ public class InterfaceAgent extends Agent
         this.addBehaviour(par);
         
         this.menu =  new Menu();
+        int i;
+            i = 0;
+            while (i<this.menu.getjTable1().getRowCount()){
+                this.menu.getjTable1().setValueAt(false, i, 2);
+                i++;
+            }
         this.menu.setAgente(this);
         this.menu.setVisible(true);
     }
