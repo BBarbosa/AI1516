@@ -32,10 +32,6 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     {
         // if scan found something
         int currentLine = 0;
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
         String[] agentTypes = content.split("[\n]");
         for (String at : agentTypes)
         {
@@ -44,7 +40,6 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
             {
                 agente.menu.getjTable1().setValueAt(agentNames[j], currentLine + (j-1), 0);
                 agente.menu.getjTable1().setValueAt(agentNames[0], currentLine + (j-1), 1); 
-<<<<<<< HEAD
 
                 System.out.println(this.agente.activeAgentsBehaviour.toString());
                 if(fst==0){
@@ -67,12 +62,6 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
             
         }
         fst = 1;
-=======
-            }
-            currentLine += agentNames.length - 1;
-        }
-
->>>>>>> origin/master
         printLog("Scanned Sensors!");
     }
     
@@ -96,11 +85,8 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
             or( MessageTemplate.MatchPerformative( ACLMessage.CONFIRM ),
                 MessageTemplate.MatchPerformative( ACLMessage.FAILURE ))
             ));
-<<<<<<< HEAD
 
 
-=======
->>>>>>> origin/master
 
         if (msg != null)
         {
