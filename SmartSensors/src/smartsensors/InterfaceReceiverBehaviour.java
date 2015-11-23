@@ -72,7 +72,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         
         agente.menu.getjTextField2().setText(content);
         agente.menu.getjLabel1().setText(agente.requestMap.get(id));
-        
+        agente.menu.addTemp(Integer.parseInt(content), "Garagem");
     }
     
     public void processStatus(String content)

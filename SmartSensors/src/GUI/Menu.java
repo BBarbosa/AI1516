@@ -4,6 +4,7 @@ import jade.core.AID;
 import jade.core.Agent;
 import jade.lang.acl.ACLMessage;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Label;
@@ -18,11 +19,19 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
+import org.jfree.chart.JFreeChart;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.data.category.DefaultCategoryDataset;
 import smartsensors.InterfaceAgent;
 
 public class Menu extends javax.swing.JFrame {
     
     private InterfaceAgent agente;
+    private DefaultCategoryDataset tempDataset;
+    private int instant;
     
     /**
      * Creates new form Menu
@@ -30,42 +39,60 @@ public class Menu extends javax.swing.JFrame {
     public Menu() {
         initComponents();
         ImageIcon image = new ImageIcon("images/house_plan_1.jpg"); 
-            JLabel label = new JLabel();
-            label.setBounds(0, 0, 615, 325);
-            label.setIcon(image);
-            this.jPanel1.setLayout(null);
-            this.jPanel1.add( label );
-            
-            
-  jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
-    @Override
-    public void mouseClicked(java.awt.event.MouseEvent evt) {
-        Boolean flag = true;
-        int row = jTable1.rowAtPoint(evt.getPoint());
-        int col = jTable1.columnAtPoint(evt.getPoint());
+        JLabel label = new JLabel();
+        label.setBounds(0, 0, 615, 325);
+        label.setIcon(image);
+        this.jPanel1.setLayout(null);
+        this.jPanel1.add( label );
         
-       
-        if (row >= 0 && col == 2) {
+        this.tempDataset = new DefaultCategoryDataset();
+        
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                Boolean flag = true;
+                int row = jTable1.rowAtPoint(evt.getPoint());
+                int col = jTable1.columnAtPoint(evt.getPoint());
                 
-            if(jTable1.getValueAt(row, col).equals(!flag)){
                 
-                System.out.println("VAI FICAR ONLINE ::: ESTA "+jTable1.getValueAt(row, col));
-                sendMsg(jTable1.getValueAt(row, 0).toString()+".online");
-                
+                if (row >= 0 && col == 2) {
+                    
+                    if(jTable1.getValueAt(row, col).equals(!flag)){
+                        
+                        System.out.println("VAI FICAR ONLINE ::: ESTA "+jTable1.getValueAt(row, col));
+                        sendMsg(jTable1.getValueAt(row, 0).toString()+".online");
+                        
+                    }
+                    if(jTable1.getValueAt(row, col).equals(flag)){
+                        
+                        System.out.println("VAI FICAR oFFLINE ::: ESTA "+jTable1.getValueAt(row, col));
+                        sendMsg(jTable1.getValueAt(row, 0).toString()+".offline");
+                    }
+                    
+                }
             }
-            if(jTable1.getValueAt(row, col).equals(flag)){
-                
-                System.out.println("VAI FICAR oFFLINE ::: ESTA "+jTable1.getValueAt(row, col));
-                sendMsg(jTable1.getValueAt(row, 0).toString()+".offline");
-            }
-
-        }
+        });   
     }
-});
-            
-            
+    
+    public void updateTempChart() {
+        JFreeChart chart = ChartFactory.createLineChart("Temperatura", "Instante", "Temperatura", tempDataset, PlotOrientation.VERTICAL, true, true, false);
+        
+        CategoryPlot catPlot = chart.getCategoryPlot();
+        catPlot.setRangeGridlinePaint(Color.BLACK);
+        
+        ChartPanel charPanel = new ChartPanel(chart);
+        charPanel.setBounds(0,0,626,388);
+        jPanel2.removeAll();
+        jPanel2.add(charPanel,BorderLayout.CENTER);
+        jPanel2.validate();
     }
-
+    
+    public void addTemp(int value, String div) {
+        this.tempDataset.addValue(value,div,""+this.instant);
+        this.instant++;
+        this.updateTempChart();
+    }
+    
     public JTextField getjTextField2() {
         return jTextField2;
     }
