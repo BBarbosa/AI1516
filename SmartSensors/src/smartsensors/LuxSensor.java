@@ -12,6 +12,7 @@ import java.util.Random;
 public class LuxSensor extends Agent{
     private boolean sensorState = false;
     private boolean finished = false;
+    private int last = new Random().nextInt(1200);
 
     @Override
     protected void takeDown()
@@ -59,6 +60,15 @@ public class LuxSensor extends Agent{
     public void setFinished(boolean finished) {
             this.finished = finished;
     }
+
+    public int getLast() {
+        return last;
+    }
+
+    public void setLast(int last) {
+        this.last = last;
+    }
+    
 
     private class ReceiveBehaviour extends CyclicBehaviour
     {
@@ -114,16 +124,18 @@ public class LuxSensor extends Agent{
                     {
                         if (isSensorState())
                         {
-                            int randomNum = new Random().nextInt(1200);
-                            if (randomNum > 1000)
+                            int i = getLast() + new Random().nextInt(50) - new Random().nextInt(50);
+                            setLast(i);
+                            if (i < 0 || i >= 1000)
                             {
+                                setLast(new Random().nextInt(1200));
                                 reply.setContent("XXXXX");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
                             else
                             {
-                                reply.setContent(randomNum+"");
+                                reply.setContent(i + "");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }

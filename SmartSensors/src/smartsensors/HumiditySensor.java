@@ -12,6 +12,7 @@ import java.util.Random;
 public class HumiditySensor extends Agent {
     private boolean sensorState = false;
     private boolean finished = false;
+    private int last = new Random().nextInt(120);
 
     @Override
     protected void takeDown()
@@ -59,6 +60,16 @@ public class HumiditySensor extends Agent {
     public void setFinished(boolean finished) {
             this.finished = finished;
     }
+
+    public int getLast() {
+        return last;
+    }
+
+    public void setLast(int last) {
+        this.last = last;
+    }
+    
+    
 
     private class ReceiveBehaviour extends CyclicBehaviour
     {
@@ -114,16 +125,18 @@ public class HumiditySensor extends Agent {
                     {
                         if (isSensorState())
                         {
-                            int randomNum = new Random().nextInt(130);
-                            if (randomNum > 100)
+                            int i = getLast() + new Random().nextInt(5) - new Random().nextInt(5);
+                            setLast(i);
+                            if (i < 0 || i > 100)
                             {
+                                setLast(new Random().nextInt(120));
                                 reply.setContent("XXXXX");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
-                            else if (randomNum >= 0 && randomNum <= 100)
+                            else
                             {
-                                reply.setContent(randomNum+"");
+                                reply.setContent(i + "");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }

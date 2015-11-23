@@ -114,7 +114,7 @@ public class MovementSensor extends Agent {
                     {
                         if (isSensorState())
                         {
-                            int randomNum = new Random().nextInt(130);
+                            int randomNum = new Random().nextInt(120);
                             if (randomNum >= 100)
                             {
                                 reply.setContent("XXXXX");

@@ -13,6 +13,7 @@ public class TempSensor extends Agent
 {
     private boolean sensorState = false;
     private boolean finished = false;
+    private int last = new Random().nextInt(60);
 
     @Override
     protected void takeDown()
@@ -59,6 +60,14 @@ public class TempSensor extends Agent
 
     public void setFinished(boolean finished) {
             this.finished = finished;
+    }
+
+    public int getLast() {
+        return last;
+    }
+
+    public void setLast(int last) {
+        this.last = last;
     }
 
     private class ReceiveBehaviour extends CyclicBehaviour
@@ -118,22 +127,18 @@ public class TempSensor extends Agent
                         if (isSensorState())
                         {
                             //int randomNum = Math.abs(new Random().nextInt() % 100);
-                            int randomNum = new Random().nextInt(130);
-                            if (randomNum > 60 && randomNum < 100)
+                            int i = getLast() + new Random().nextInt(5) - new Random().nextInt(5);
+                            setLast(i);
+                            if (i < -10 || (i >= 50 && i <= 60))
                             {
+                                setLast(new Random().nextInt(60));
                                 reply.setContent("XXXXX");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
-                            else if (randomNum >= 100 && randomNum <= 130)
+                            else
                             {
-                                reply.setContent(-randomNum+100+"");
-                                reply.setPerformative(ACLMessage.INFORM);
-                                myAgent.send(reply);
-                            }
-                            else if (randomNum >= 0 && randomNum <= 60)
-                            {
-                                reply.setContent(randomNum+"");
+                                reply.setContent(i + "");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
