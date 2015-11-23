@@ -6,15 +6,18 @@ import jade.lang.acl.MessageTemplate;
 import static jade.lang.acl.MessageTemplate.or;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Vector;
+import javax.swing.table.DefaultTableModel;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
     private InterfaceAgent agente;
+    private int fst;
     
     
     public InterfaceReceiverBehaviour(InterfaceAgent a)
     {
-       
+        fst = 0;
         agente = a;
     }
 
@@ -32,18 +35,31 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         // if scan found something
         int currentLine = 0;
         String[] agentTypes = content.split("[\n]");
+        DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable1().getModel();
+                    
         for (String at : agentTypes)
         {
             String[] agentNames = at.split("[.]");
             for (int j = 1; j < agentNames.length; j++)
             {
-                agente.menu.getjTable1().setValueAt(agentNames[j], currentLine + (j-1), 0);
-                agente.menu.getjTable1().setValueAt(agentNames[0], currentLine + (j-1), 1);
-               
+                if(fst == 0){
+                
+                    Vector newRow = new Vector();
+                    newRow.add(agentNames[j]);
+                    newRow.add(agentNames[0]);
+                    newRow.add(false);
+                    defaultModel.addRow(newRow); 
+                    this.agente.menu.getjTable1().setModel(defaultModel);
+                    
+                }else{
+                    agente.menu.getjTable1().setValueAt(agentNames[j], currentLine + (j-1), 0);
+                    agente.menu.getjTable1().setValueAt(agentNames[0], currentLine + (j-1), 1);
+                }
             }
             currentLine += agentNames.length - 1;
             
         }
+        fst = 1;
         printLog("Scanned Sensors!");
         
     }
