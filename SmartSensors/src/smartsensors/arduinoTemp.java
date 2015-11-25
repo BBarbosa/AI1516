@@ -151,10 +151,10 @@ public class arduinoTemp extends Agent {
                             getSerial().writeData(1);
                             
                             String s = getSerial().getData();
-                            String n = "Erro";
+                            String n = "XXXXX";
                             if(s.contains(".")){
                                 String[] split = s.split("\\.");
-                                n = split[0]+"."+split[1];
+                                n = split[0];
                             }
                             
                             reply.setContent(n + "");
