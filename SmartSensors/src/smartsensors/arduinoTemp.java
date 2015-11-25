@@ -148,7 +148,16 @@ public class arduinoTemp extends Agent {
                         System.out.println(isSensorState());
                         if (isSensorState())
                         {
-                            reply.setContent(getSerial().getData() + "");
+                            getSerial().writeData(1);
+                            
+                            String s = getSerial().getData();
+                            String n = "Erro";
+                            if(s.contains(".")){
+                                String[] split = s.split("\\.");
+                                n = split[0]+"."+split[1];
+                            }
+                            
+                            reply.setContent(n + "");
                             reply.setPerformative(ACLMessage.INFORM);
                             myAgent.send(reply);
                         }

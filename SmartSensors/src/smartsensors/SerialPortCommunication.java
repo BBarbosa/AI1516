@@ -42,8 +42,7 @@ public class SerialPortCommunication {
     Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
     //First, Find an instance of serial port as set in PORT_NAMES.
     while (portEnum.hasMoreElements()) {
-       CommPortIdentifier currPortId = (CommPortIdentifier) 
-                                         portEnum.nextElement();
+       CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
        for (String portName : PORT_NAMES) {
          if (currPortId.getName().equals(portName)) {
             portId = currPortId;
@@ -58,8 +57,7 @@ public class SerialPortCommunication {
     }
     try {
        // open serial port, and use class name for the appName.
-       serialPort = (SerialPort) portId.open(this.getClass().getName(),
-                                                            TIME_OUT);
+       serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
        // set port parameters
        serialPort.setSerialPortParams(DATA_RATE,
             SerialPort.DATABITS_8,
@@ -74,16 +72,17 @@ public class SerialPortCommunication {
     }
     }
   
-    /*
-    public void writeData(String data) {
+    
+    public void writeData(int data) {
         try {
             //write data in the serial port
-            output.write(data.getBytes());
+            //output.write(data.getBytes());
+            output.write(data);
         } catch (Exception e) {
             System.out.println("could not write to port");
         }
     }
-  */
+  
 
     public String getData() {
         String data = null;
