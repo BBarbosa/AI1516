@@ -123,13 +123,13 @@ public class MovementSensor extends Agent {
                             }
                             else if (randomNum >= 0 && randomNum < 30)
                             {
-                                reply.setContent("true");
+                                reply.setContent("1");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
                             else if (randomNum >= 30 && randomNum < 100)
                             {
-                                reply.setContent("false");
+                                reply.setContent("0");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }

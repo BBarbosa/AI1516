@@ -148,8 +148,6 @@ public class arduinoTemp extends Agent {
                         System.out.println(isSensorState());
                         if (isSensorState())
                         {
-                            getSerial().writeData(1);
-                            
                             String s = getSerial().getData();
                             String n = "XXXXX";
                             if(s.contains(".")){
