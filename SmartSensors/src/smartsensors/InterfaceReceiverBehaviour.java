@@ -11,6 +11,7 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;
 import javax.swing.JTable;
+import smartsensors.ProfileManager;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
@@ -18,6 +19,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     private int fst;
     private ArrayList<Rule> automationProfile;
     private Rule r1;
+    private Rule r2;
     
     public InterfaceReceiverBehaviour(InterfaceAgent a)
     {
@@ -33,6 +35,10 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         myConditions.put("r2temp",rc2);
         
         r1 = new Rule(true, myConditions,"Ligou", "Desligou");
+        
+        if (ProfileManager.saveProfile(r1,"myProfile"))
+            r2 = ProfileManager.loadProfile("myProfile");
+        else System.out.println("Could not load file!");
     }
 
     public void printLog(String txt)
@@ -90,26 +96,26 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         
         // TODO: Iterate through rules
         // Process rule
-        if (r1.getActive())
+        if (r2.getActive())
         {
             // if a rule sensor is offline, skip evaluation
             Boolean carryOn = true;
-            for (String ruleSensor : r1.getRuleSensors())
+            for (String ruleSensor : r2.getRuleSensors())
                 if (!agente.activeSensors.contains(ruleSensor))
                 {
                     carryOn = false;
-                    r1.setOn(false);
+                    r2.setOn(false);
                 }
             
             if (carryOn)
             {
-                String evalResult = r1.evaluateRule(sensorName, content);
+                String evalResult = r2.evaluateRule(sensorName, content);
                 if (evalResult != null)
                     printLog(evalResult);   
             }
         }
         else
-            r1.setOn(false);
+            r2.setOn(false);
     }
     
     public void processStatus(String content)
