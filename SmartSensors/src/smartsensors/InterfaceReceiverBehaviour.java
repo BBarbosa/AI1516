@@ -105,31 +105,36 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         
         this.agente.labels.get(sensorName).setText("Sensor: "+sensorName+" = "+content);
         
-        //estoura se receber XXXXX
-        agente.menu.addTemp(Integer.parseInt(content), "Garagem");
+        // should match a regex expression instead
+        if (!content.contains("X"))
+            agente.menu.addTemp(Integer.parseInt(content), "Garagem");
         
-        // TODO: Iterate through rules
-        // Process rule
-        if (r2.getActive())
+        for (Rule r : agente.automationProfile)
         {
-            // if a rule sensor is offline, skip evaluation
-            Boolean carryOn = true;
-            for (String ruleSensor : r2.getRuleSensors())
-                if (!agente.activeSensors.contains(ruleSensor))
-                {
-                    carryOn = false;
-                    r2.setOn(false);
-                }
-            
-            if (carryOn)
+            // Process rule
+            if (r.getActive())
             {
-                String evalResult = r2.evaluateRule(sensorName, content);
-                if (evalResult != null)
-                    printLog(evalResult);   
+                // if a rule sensor is offline, skip evaluation
+                Boolean carryOn = true;
+                for (String ruleSensor : r.getRuleSensors())
+                    if (!agente.activeSensors.contains(ruleSensor))
+                    {
+                        carryOn = false;
+                        r.setOn(false);
+                        System.out.println("RuleSensor: "+ruleSensor);
+                    }
+
+                if (carryOn)
+                {
+                    System.out.println("chega2");
+                    String evalResult = r.evaluateRule(sensorName, content);
+                    if (evalResult != null)
+                        printLog(evalResult);   
+                }
             }
+            else
+                r.setOn(false);
         }
-        else
-            r2.setOn(false);
     }
     
     public void processStatus(String content)
