@@ -106,8 +106,16 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         this.agente.labels.get(sensorName).setText("Sensor: "+sensorName+" = "+content);
         
         // should match a regex expression instead
-        if (!content.contains("X"))
-            agente.menu.addTemp(Integer.parseInt(content), "Garagem");
+        if (!content.contains("X")) {
+            switch(sensorName) {
+                case "temp" : agente.menu.addTemp(Integer.parseInt(content), "Garage"); break;
+                case "humi" : agente.menu.addHum(Integer.parseInt(content), "Kitchen"); break;
+                case "mov" : agente.menu.addMov(Integer.parseInt(content), "Living Room"); break;
+                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), "Bedroom 1"); break;
+                case "lumi" : agente.menu.addLum(Integer.parseInt(content), "Bedroom 2"); break; 
+            }
+        }
+            
         
         for (Rule r : agente.automationProfile)
         {

@@ -30,7 +30,11 @@ import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
+import org.jfree.data.time.Second;
+import org.jfree.data.time.TimeSeries;
+import org.jfree.data.time.TimeSeriesCollection;
 import smartsensors.InterfaceAgent;
 import smartsensors.ProfileManager;
 import smartsensors.Rule;
@@ -40,8 +44,12 @@ import smartsensors.TempSensor;
 public class Menu extends javax.swing.JFrame {
     
     private InterfaceAgent agente;
-    private DefaultCategoryDataset tempDataset;
-    private int instant;
+  
+    private TimeSeries tempDataset;
+    private TimeSeries humDataset;
+    private TimeSeries movDataset;
+    private TimeSeries smokeDataset;
+    private TimeSeries lumDataset;
     
     /**
      * Creates new form Menu
@@ -55,7 +63,11 @@ public class Menu extends javax.swing.JFrame {
         
         this.jPanel1.add( label );
         
-        this.tempDataset = new DefaultCategoryDataset();
+        this.tempDataset = new TimeSeries("Temperature");
+        this.humDataset = new TimeSeries("Humidity");
+        this.movDataset = new TimeSeries("Movement");
+        this.smokeDataset = new TimeSeries("Smoke");
+        this.lumDataset = new TimeSeries("Luminosity");
         
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -147,25 +159,110 @@ public class Menu extends javax.swing.JFrame {
         });  
     }
     
+    /* UPDATE CHARTS */
     public void updateTempChart() {
-        JFreeChart chart = ChartFactory.createLineChart("Temperatura", "Instante", "Temperatura", tempDataset, PlotOrientation.VERTICAL, true, true, false);
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(tempDataset);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart("Temperature", "Time", "Temperature", dataset, true, true, false);
         
-        CategoryPlot catPlot = chart.getCategoryPlot();
+        XYPlot catPlot = chart.getXYPlot();
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,626,388);
-        jPanel2.removeAll();
-        jPanel2.add(charPanel,BorderLayout.CENTER);
-        jPanel2.validate();
+        charPanel.setBounds(0,0,616,482);
+        jPanel4.removeAll();
+        jPanel4.add(charPanel,BorderLayout.CENTER);
+        jPanel4.validate();
     }
     
+    public void updateHumChart() {
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(humDataset);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart("Humidity", "Time", "Humidity", dataset, true, true, false);
+        
+        XYPlot catPlot = chart.getXYPlot();
+        catPlot.setRangeGridlinePaint(Color.BLACK);
+        
+        ChartPanel charPanel = new ChartPanel(chart);
+        charPanel.setBounds(0,0,616,482);
+        jPanel5.removeAll();
+        jPanel5.add(charPanel,BorderLayout.CENTER);
+        jPanel5.validate();
+    }
+    
+    public void updateMovChart() {
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(movDataset);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart("Movement", "Time", "Movement", dataset, true, true, false);
+        
+        XYPlot catPlot = chart.getXYPlot();
+        catPlot.setRangeGridlinePaint(Color.BLACK);
+        
+        ChartPanel charPanel = new ChartPanel(chart);
+        charPanel.setBounds(0,0,616,482);
+        jPanel6.removeAll();
+        jPanel6.add(charPanel,BorderLayout.CENTER);
+        jPanel6.validate();
+    }
+    
+    public void updateSmokeChart() {
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(smokeDataset);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart("Smoke", "Time", "Smoke", dataset, true, true, false);
+        
+        XYPlot catPlot = chart.getXYPlot();
+        catPlot.setRangeGridlinePaint(Color.BLACK);
+        
+        ChartPanel charPanel = new ChartPanel(chart);
+        charPanel.setBounds(0,0,616,482);
+        jPanel7.removeAll();
+        jPanel7.add(charPanel,BorderLayout.CENTER);
+        jPanel7.validate();
+    }
+    
+    public void updateLumChart() {
+        TimeSeriesCollection dataset = new TimeSeriesCollection();
+        dataset.addSeries(tempDataset);
+        JFreeChart chart = ChartFactory.createTimeSeriesChart("Luminosity", "Time", "Luminosity", dataset, true, true, false);
+        
+        XYPlot catPlot = chart.getXYPlot();
+        catPlot.setRangeGridlinePaint(Color.BLACK);
+        
+        ChartPanel charPanel = new ChartPanel(chart);
+        charPanel.setBounds(0,0,616,482);
+        jPanel8.removeAll();
+        jPanel8.add(charPanel,BorderLayout.CENTER);
+        jPanel8.validate();
+    }
+    
+    /* ADD VALUES TO CHARTS */
     public void addTemp(int value, String div) {
-        this.tempDataset.addValue(value,div,""+this.instant);
-        this.instant++;
+        this.tempDataset.addOrUpdate(new Second(), value);
         this.updateTempChart();
     }
-
+    
+    public void addHum(int value, String div) {
+        this.humDataset.addOrUpdate(new Second(), value);
+        this.updateHumChart();
+    }
+    
+    public void addMov(int value, String div) {
+        this.movDataset.addOrUpdate(new Second(), value);
+        this.updateMovChart();
+    }
+    
+    public void addSmoke(int value, String div) {
+        this.smokeDataset.addOrUpdate(new Second(), value);
+        this.updateSmokeChart();
+    }
+    
+    public void addLum(int value, String div) {
+        this.lumDataset.addOrUpdate(new Second(), value);
+        this.updateLumChart();
+    }
+    
+    /* OTHERS METHODS */
+    
     public JTextField getjTextField1() {
         return jTextField1;
     }
@@ -330,6 +427,12 @@ public class Menu extends javax.swing.JFrame {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
+        jTabbedPane2 = new javax.swing.JTabbedPane();
+        jPanel4 = new javax.swing.JPanel();
+        jPanel5 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
+        jPanel7 = new javax.swing.JPanel();
+        jPanel8 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
@@ -391,15 +494,80 @@ public class Menu extends javax.swing.JFrame {
 
         jTabbedPane1.addTab("House Overview", jPanel1);
 
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 616, Short.MAX_VALUE)
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 482, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Temperature", jPanel4);
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 616, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 482, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Humidity", jPanel5);
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 616, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 482, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Movement", jPanel6);
+
+        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
+        jPanel7.setLayout(jPanel7Layout);
+        jPanel7Layout.setHorizontalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 616, Short.MAX_VALUE)
+        );
+        jPanel7Layout.setVerticalGroup(
+            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 482, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Smoke", jPanel7);
+
+        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
+        jPanel8.setLayout(jPanel8Layout);
+        jPanel8Layout.setHorizontalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 616, Short.MAX_VALUE)
+        );
+        jPanel8Layout.setVerticalGroup(
+            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 482, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Luminosity", jPanel8);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 621, Short.MAX_VALUE)
+            .addComponent(jTabbedPane2)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 510, Short.MAX_VALUE)
+            .addComponent(jTabbedPane2)
         );
 
         jTabbedPane1.addTab("Statistics", jPanel2);
@@ -580,20 +748,17 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel3))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel4)
+                        .addComponent(jLabel3))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(15, 15, 15)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jButton7))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 22, Short.MAX_VALUE)))
+                            .addComponent(jButton7))))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jLabel7)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -953,12 +1118,18 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private javax.swing.JTabbedPane jTabbedPane2;
     private javax.swing.JTable jTable1;
     private javax.swing.JTable jTable2;
     private javax.swing.JTable jTable3;
