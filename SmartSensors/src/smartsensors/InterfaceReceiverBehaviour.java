@@ -101,18 +101,19 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         System.out.println("SENSOR:"+sensorName);
         System.out.println("SENSOR VALUE: "+content);
         
-        
-        
         this.agente.labels.get(sensorName).setText("Sensor: "+sensorName+" = "+content);
         
         // should match a regex expression instead
         if (!content.contains("X")) {
-            switch(sensorName) {
-                case "temp" : agente.menu.addTemp(Integer.parseInt(content), "Garage"); break;
-                case "humi" : agente.menu.addHum(Integer.parseInt(content), "Kitchen"); break;
-                case "mov" : agente.menu.addMov(Integer.parseInt(content), "Living Room"); break;
-                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), "Bedroom 1"); break;
-                case "lumi" : agente.menu.addLum(Integer.parseInt(content), "Bedroom 2"); break; 
+            //sensorName example: sensorType-div
+            String type = sensorName.split("-")[0]; 
+            String div = sensorName.split("-")[1];
+            switch(type) {
+                case "temp" : agente.menu.addTemp(Integer.parseInt(content), div); break;
+                case "humi" : agente.menu.addHum(Integer.parseInt(content), div); break;
+                case "mov" : agente.menu.addMov(Integer.parseInt(content), div); break;
+                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), div); break;
+                case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break; 
             }
         }
             

@@ -44,12 +44,36 @@ import smartsensors.TempSensor;
 public class Menu extends javax.swing.JFrame {
     
     private InterfaceAgent agente;
-  
-    private TimeSeries tempDataset;
-    private TimeSeries humDataset;
-    private TimeSeries movDataset;
-    private TimeSeries smokeDataset;
-    private TimeSeries lumDataset;
+    /* temperature */
+    private TimeSeries tempLRoomDataset;
+    private TimeSeries tempKitchenDataset;
+    private TimeSeries tempGarageDataset;
+    private TimeSeries tempBr1Dataset;
+    private TimeSeries tempBr2Dataset;
+    /* humidity */
+    private TimeSeries humLRoomDataset;
+    private TimeSeries humKitchenDataset;
+    private TimeSeries humGarageDataset;
+    private TimeSeries humBr1Dataset;
+    private TimeSeries humBr2Dataset;
+    /* movement */
+    private TimeSeries movLRoomDataset;
+    private TimeSeries movKitchenDataset;
+    private TimeSeries movGarageDataset;
+    private TimeSeries movBr1Dataset;
+    private TimeSeries movBr2Dataset;
+    /* smoke */
+    private TimeSeries smokeLRoomDataset;
+    private TimeSeries smokeKitchenDataset;
+    private TimeSeries smokeGarageDataset;
+    private TimeSeries smokeBr1Dataset;
+    private TimeSeries smokeBr2Dataset;
+    /* luminosity */
+    private TimeSeries lumLRoomDataset;
+    private TimeSeries lumKitchenDataset;
+    private TimeSeries lumGarageDataset;
+    private TimeSeries lumBr1Dataset;
+    private TimeSeries lumBr2Dataset;
     
     /**
      * Creates new form Menu
@@ -62,12 +86,36 @@ public class Menu extends javax.swing.JFrame {
         label.setIcon(image);
         
         this.jPanel1.add( label );
-        
-        this.tempDataset = new TimeSeries("Temperature");
-        this.humDataset = new TimeSeries("Humidity");
-        this.movDataset = new TimeSeries("Movement");
-        this.smokeDataset = new TimeSeries("Smoke");
-        this.lumDataset = new TimeSeries("Luminosity");
+        /* temperature */
+        this.tempLRoomDataset = new TimeSeries("Living Room");
+        this.tempKitchenDataset = new TimeSeries("Kitchen");
+        this.tempGarageDataset = new TimeSeries("Garage");
+        this.tempBr1Dataset = new TimeSeries("Bedroom 1");
+        this.tempBr2Dataset = new TimeSeries("Bedroom 2");
+        /* humidity */
+        this.humLRoomDataset = new TimeSeries("Living Room");
+        this.humKitchenDataset = new TimeSeries("Kitchen");
+        this.humGarageDataset = new TimeSeries("Garage");
+        this.humBr1Dataset = new TimeSeries("Bedroom 1");
+        this.humBr2Dataset = new TimeSeries("Bedroom 2");
+        /* movement */
+        this.movLRoomDataset = new TimeSeries("Living Room");
+        this.movKitchenDataset = new TimeSeries("Kitchen");
+        this.movGarageDataset = new TimeSeries("Garage");
+        this.movBr1Dataset = new TimeSeries("Bedroom 1");
+        this.movBr2Dataset = new TimeSeries("Bedroom 2");
+        /* smoke */
+        this.smokeLRoomDataset = new TimeSeries("Living Room");
+        this.smokeKitchenDataset = new TimeSeries("Kitchen");
+        this.smokeGarageDataset = new TimeSeries("Garage");
+        this.smokeBr1Dataset = new TimeSeries("Bedroom 1");
+        this.smokeBr2Dataset = new TimeSeries("Bedroom 2");
+        /* luminosity */
+        this.lumLRoomDataset = new TimeSeries("Living Room");
+        this.lumKitchenDataset = new TimeSeries("Kitchen");
+        this.lumGarageDataset = new TimeSeries("Garage");
+        this.lumBr1Dataset = new TimeSeries("Bedroom 1");
+        this.lumBr2Dataset = new TimeSeries("Bedroom 2");
         
         jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
@@ -162,7 +210,11 @@ public class Menu extends javax.swing.JFrame {
     /* UPDATE CHARTS */
     public void updateTempChart() {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(tempDataset);
+        dataset.addSeries(tempLRoomDataset);
+        dataset.addSeries(tempKitchenDataset);
+        dataset.addSeries(tempGarageDataset);
+        dataset.addSeries(tempBr1Dataset);
+        dataset.addSeries(tempBr2Dataset);
         JFreeChart chart = ChartFactory.createTimeSeriesChart("Temperature", "Time", "Temperature", dataset, true, true, false);
         
         XYPlot catPlot = chart.getXYPlot();
@@ -177,7 +229,11 @@ public class Menu extends javax.swing.JFrame {
     
     public void updateHumChart() {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(humDataset);
+        dataset.addSeries(humLRoomDataset);
+        dataset.addSeries(humKitchenDataset);
+        dataset.addSeries(humGarageDataset);
+        dataset.addSeries(humBr1Dataset);
+        dataset.addSeries(humBr2Dataset);
         JFreeChart chart = ChartFactory.createTimeSeriesChart("Humidity", "Time", "Humidity", dataset, true, true, false);
         
         XYPlot catPlot = chart.getXYPlot();
@@ -192,7 +248,11 @@ public class Menu extends javax.swing.JFrame {
     
     public void updateMovChart() {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(movDataset);
+        dataset.addSeries(movLRoomDataset);
+        dataset.addSeries(movKitchenDataset);
+        dataset.addSeries(movGarageDataset);
+        dataset.addSeries(movBr1Dataset);
+        dataset.addSeries(movBr2Dataset);
         JFreeChart chart = ChartFactory.createTimeSeriesChart("Movement", "Time", "Movement", dataset, true, true, false);
         
         XYPlot catPlot = chart.getXYPlot();
@@ -207,7 +267,11 @@ public class Menu extends javax.swing.JFrame {
     
     public void updateSmokeChart() {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(smokeDataset);
+        dataset.addSeries(smokeLRoomDataset);
+        dataset.addSeries(smokeKitchenDataset);
+        dataset.addSeries(smokeGarageDataset);
+        dataset.addSeries(smokeBr1Dataset);
+        dataset.addSeries(smokeBr2Dataset);
         JFreeChart chart = ChartFactory.createTimeSeriesChart("Smoke", "Time", "Smoke", dataset, true, true, false);
         
         XYPlot catPlot = chart.getXYPlot();
@@ -222,7 +286,11 @@ public class Menu extends javax.swing.JFrame {
     
     public void updateLumChart() {
         TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(tempDataset);
+        dataset.addSeries(lumLRoomDataset);
+        dataset.addSeries(lumKitchenDataset);
+        dataset.addSeries(lumGarageDataset);
+        dataset.addSeries(lumBr1Dataset);
+        dataset.addSeries(lumBr2Dataset);
         JFreeChart chart = ChartFactory.createTimeSeriesChart("Luminosity", "Time", "Luminosity", dataset, true, true, false);
         
         XYPlot catPlot = chart.getXYPlot();
@@ -237,27 +305,57 @@ public class Menu extends javax.swing.JFrame {
     
     /* ADD VALUES TO CHARTS */
     public void addTemp(int value, String div) {
-        this.tempDataset.addOrUpdate(new Second(), value);
+        switch(div) {
+            case "kitchen" :  this.tempKitchenDataset.addOrUpdate(new Second(), value); break;
+            case "lroom" : this.tempLRoomDataset.addOrUpdate(new Second(), value); break;
+            case "garage" : this.tempGarageDataset.addOrUpdate(new Second(), value); break;
+            case "br1" : this.tempBr1Dataset.addOrUpdate(new Second(), value); break;
+            case "br2" : this.tempBr2Dataset.addOrUpdate(new Second(), value); break;
+        }
         this.updateTempChart();
     }
     
     public void addHum(int value, String div) {
-        this.humDataset.addOrUpdate(new Second(), value);
+        switch(div) {
+            case "kitchen" :  this.humKitchenDataset.addOrUpdate(new Second(), value); break;
+            case "lroom" : this.humLRoomDataset.addOrUpdate(new Second(), value); break;
+            case "garage" : this.humGarageDataset.addOrUpdate(new Second(), value); break;
+            case "br1" : this.humBr1Dataset.addOrUpdate(new Second(), value); break;
+            case "br2" : this.humBr2Dataset.addOrUpdate(new Second(), value); break;
+        }
         this.updateHumChart();
     }
     
     public void addMov(int value, String div) {
-        this.movDataset.addOrUpdate(new Second(), value);
+        switch(div) {
+            case "kitchen" :  this.movKitchenDataset.addOrUpdate(new Second(), value); break;
+            case "lroom" : this.movLRoomDataset.addOrUpdate(new Second(), value); break;
+            case "garage" : this.movGarageDataset.addOrUpdate(new Second(), value); break;
+            case "br1" : this.movBr1Dataset.addOrUpdate(new Second(), value); break;
+            case "br2" : this.movBr2Dataset.addOrUpdate(new Second(), value); break;
+        }
         this.updateMovChart();
     }
     
     public void addSmoke(int value, String div) {
-        this.smokeDataset.addOrUpdate(new Second(), value);
+        switch(div) {
+            case "kitchen" :  this.smokeKitchenDataset.addOrUpdate(new Second(), value); break;
+            case "lroom" : this.smokeLRoomDataset.addOrUpdate(new Second(), value); break;
+            case "garage" : this.smokeGarageDataset.addOrUpdate(new Second(), value); break;
+            case "br1" : this.smokeBr1Dataset.addOrUpdate(new Second(), value); break;
+            case "br2" : this.smokeBr2Dataset.addOrUpdate(new Second(), value); break;
+        }
         this.updateSmokeChart();
     }
     
     public void addLum(int value, String div) {
-        this.lumDataset.addOrUpdate(new Second(), value);
+        switch(div) {
+            case "kitchen" :  this.lumKitchenDataset.addOrUpdate(new Second(), value); break;
+            case "lroom" : this.lumLRoomDataset.addOrUpdate(new Second(), value); break;
+            case "garage" : this.lumGarageDataset.addOrUpdate(new Second(), value); break;
+            case "br1" : this.lumBr1Dataset.addOrUpdate(new Second(), value); break;
+            case "br2" : this.lumBr2Dataset.addOrUpdate(new Second(), value); break;
+        }
         this.updateLumChart();
     }
     
