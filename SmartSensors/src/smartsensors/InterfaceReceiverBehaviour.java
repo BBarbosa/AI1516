@@ -11,13 +11,13 @@ import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import smartsensors.ProfileManager;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
     private InterfaceAgent agente;
     private int fst;
-    private ArrayList<Rule> automationProfile;
     private Rule r1;
     private Rule r2;
     
@@ -25,7 +25,6 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     {
         fst = 0;
         agente = a;
-        automationProfile = new ArrayList<>();
         
         // TEST RULE
         RuleCondition rc1 = new RuleCondition("r1temp", true, 20);
@@ -56,7 +55,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         int currentLine = 0;
         String[] agentTypes = content.split("[\n]");
         DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable1().getModel();
-                    
+        int padding =20;            
         for (String at : agentTypes)
         {
             String[] agentNames = at.split("[.]");
@@ -68,8 +67,19 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                     newRow.add(agentNames[j]);
                     newRow.add(agentNames[0]);
                     newRow.add(false);
-                    defaultModel.addRow(newRow); 
+                    defaultModel.addRow(newRow);  
                     this.agente.menu.getjTable1().setModel(defaultModel);
+                    
+                     
+            JTextField label = new JTextField();
+            label.setBounds(0, padding , 100, 20);
+            label.setName(agentNames[j]);
+            this.agente.menu.getjPanel1().add(label);
+            label.setVisible(false);
+            
+            this.agente.labels.put((String) agentNames[j], label);
+                    
+                    
                     
                 }else{
                     agente.menu.getjTable1().setValueAt(agentNames[j], currentLine + (j-1), 0);
@@ -77,6 +87,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 }
             }
             currentLine += agentNames.length - 1;
+            padding=padding*2;
         }
         fst = 1;
         printLog("Scanned Sensors!");
@@ -90,8 +101,11 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         System.out.println("SENSOR:"+sensorName);
         System.out.println("SENSOR VALUE: "+content);
         
-        agente.menu.getjTextField2().setText(content);
-        agente.menu.getjLabel1().setText(agente.requestMap.get(id));
+        
+        
+        this.agente.labels.get(sensorName).setText("Sensor: "+sensorName+" = "+content);
+        
+        //estoura se receber XXXXX
         agente.menu.addTemp(Integer.parseInt(content), "Garagem");
         
         // TODO: Iterate through rules

@@ -13,7 +13,7 @@ public class Rule implements Serializable
     private HashMap<String,RuleCondition> conditions;
     private String onString;
     private String offString;
-    
+
     public Rule(Boolean a, HashMap<String,RuleCondition> c, String oS, String offS)
     {
         active = a;
@@ -36,7 +36,7 @@ public class Rule implements Serializable
     public String getOffString() {
         return offString;
     }
-    
+
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -44,7 +44,7 @@ public class Rule implements Serializable
     public void setOn(Boolean on) {
         this.on = on;
     }
-    
+
     public void setOnString(String onString) {
         this.onString = onString;
     }
@@ -52,12 +52,12 @@ public class Rule implements Serializable
     public void setOffString(String offString) {
         this.offString = offString;
     }
-    
+
     public Set<String> getRuleSensors()
     {
         return conditions.keySet();
     }
-    
+
     public String evaluateRule(String sensorName, String inValue)
     {
         // update and evaluate ruleCondition
@@ -71,29 +71,29 @@ public class Rule implements Serializable
             for (RuleCondition rc : conditions.values())
                 if (!rc.getPreviousEval())
                     return null;
-            
+
             if (!on)
             {
                 on = true;
                 return onString;
             }
         }
-        
+
         return null;
     }
-    
+
     public String ruleString()
     {
         String s = null;
-        
+
         Collection<RuleCondition> rcCol = conditions.values();
         RuleCondition[] rcs = rcCol.toArray(new RuleCondition[rcCol.size()]);
-        
+
         for (int i = 0; i < rcs.length - 1; i++)
             s += rcs[i].toString() + " AND ";
-        
+
         s += rcs[rcs.length - 1].toString() + " -> " + onString;
-            
+
         return s;
     }
 }

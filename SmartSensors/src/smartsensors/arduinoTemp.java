@@ -51,7 +51,7 @@ public class arduinoTemp extends Agent {
         catch (FIPAException fe) { fe.printStackTrace(); }
 
         System.out.println(this.getLocalName()+" starting!");
-        
+
         //Init with arduino
         serial.initialize();
 
@@ -89,20 +89,20 @@ public class arduinoTemp extends Agent {
     public void setSerial(SerialPortCommunication serial) {
         this.serial = serial;
     }
-    
-    
+
+
 
     private class ReceiveBehaviour extends CyclicBehaviour
     {
         @Override
-        public void action() 
+        public void action()
         {
             ACLMessage msg = receive();
-            if (msg != null) 
-            {            	
+            if (msg != null)
+            {
                 ACLMessage reply = msg.createReply();
                 reply.setConversationId(msg.getConversationId());
-                
+
                 if (msg.getPerformative() == ACLMessage.REQUEST)
                 {
                     if (msg.getContent().equals("shutdown"))
@@ -110,7 +110,7 @@ public class arduinoTemp extends Agent {
                         System.out.println("sensor "+myAgent.getLocalName()+" exiting...");
                         setFinished(true);
                     }
-                   
+
                     if (msg.getContent().equals("online"))
                     {
                         if (isSensorState())
@@ -154,7 +154,7 @@ public class arduinoTemp extends Agent {
                                 String[] split = s.split("\\.");
                                 n = split[0];
                             }
-                            
+
                             reply.setContent(n + "");
                             reply.setPerformative(ACLMessage.INFORM);
                             myAgent.send(reply);
@@ -176,7 +176,7 @@ public class arduinoTemp extends Agent {
 
         if (isFinished())
             myAgent.doDelete();
-        
+
         block();
         }
     }

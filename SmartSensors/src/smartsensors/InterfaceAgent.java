@@ -5,6 +5,7 @@ import jade.core.Agent;
 import jade.core.behaviours.ParallelBehaviour;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JTextField;
 
 public class InterfaceAgent extends Agent
 {
@@ -12,6 +13,8 @@ public class InterfaceAgent extends Agent
     public HashMap<Integer, String> requestMap;
     public ArrayList<String> activeSensors;
     private Integer currentConvoId;
+    public ArrayList<Rule> automationProfile;
+    public HashMap <String, JTextField> labels;
     
     public synchronized int getNewConvoId()
     {
@@ -36,6 +39,9 @@ public class InterfaceAgent extends Agent
         requestMap = new HashMap<>();
         activeSensors = new ArrayList<>();
         currentConvoId = 0;
+        labels =  new HashMap<>();
+        
+        automationProfile = new ArrayList<>();
         
         ParallelBehaviour par = new ParallelBehaviour(this, ParallelBehaviour.WHEN_ANY);
         par.addSubBehaviour(new InterfaceRequesterBehaviour(this));
@@ -46,7 +52,11 @@ public class InterfaceAgent extends Agent
         
         this.menu =  new Menu();
         for (int i = 0; i<this.menu.getjTable1().getRowCount(); i++)
+        {
             this.menu.getjTable1().setValueAt(false, i, 2);
+           
+        }
+        
 
         this.menu.setAgente(this);
         this.menu.setVisible(true);
