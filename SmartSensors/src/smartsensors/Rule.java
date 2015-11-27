@@ -36,7 +36,7 @@ public class Rule implements Serializable
     public String getOffString() {
         return offString;
     }
-
+    
     public void setActive(Boolean active) {
         this.active = active;
     }
@@ -58,30 +58,39 @@ public class Rule implements Serializable
         return conditions.keySet();
     }
 
-    public String evaluateRule(String sensorName, String inValue)
+    public void refreshRuleConditions(String sensorName, String inValue)
     {
-        // update and evaluate ruleCondition
-        System.out.println(sensorName);
-        if (sensorName != null)
+        for (Entry<String,RuleCondition> e : conditions.entrySet())
+            if (sensorName.equals(e.getKey()))
+                e.getValue().evaluateCondition(inValue);
+    }
+    
+    public String evaluateRule()
+    {
+        if (active)
         {
-            if (!conditions.get(sensorName).evaluateCondition(inValue) && on)
+            boolean allGood = true;
+            for (RuleCondition rc : conditions.values())
+                if (!rc.getPreviousEval())
+                {
+                    allGood = false;
+                    break;
+                }
+
+            if (allGood && !on)
+            {
+                on = true;
+                return onString;
+            }
+            else if (!allGood && on)
             {
                 on = false;
                 return offString;
             }
             else
-            {// check other RuleConditions
-                for (RuleCondition rc : conditions.values())
-                    if (!rc.getPreviousEval())
-                        return null;
-
-                if (!on)
-                {
-                    on = true;
-                    return onString;
-                }
-            }
+                return null;
         }
+        
         return null;
     }
 

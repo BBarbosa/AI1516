@@ -50,7 +50,7 @@ public class InterfaceAgent extends Agent
         ParallelBehaviour par = new ParallelBehaviour(this, ParallelBehaviour.WHEN_ANY);
         par.addSubBehaviour(new InterfaceRequesterBehaviour(this));
         par.addSubBehaviour(new InterfaceReceiverBehaviour(this));
-        par.addSubBehaviour(new InterfaceValueRefresher(this));
+        par.addSubBehaviour(new InterfaceTickerBehaviour(this));
         
         this.addBehaviour(par);
         

@@ -10,7 +10,7 @@ public class RuleCondition implements Serializable
 {
     private String factorName;
     private Boolean isBigger;
-    private float value;
+    private int value;
     private Boolean previousEval;
     
     public RuleCondition(String fn, Boolean b, String v)
@@ -39,7 +39,7 @@ public class RuleCondition implements Serializable
             try {cal.setTime(sdf.parse(currTime));}
             catch (ParseException ex) { ex.printStackTrace();}
             
-            currTime = ""+cal.get(Calendar.HOUR)*60 + cal.get(Calendar.MINUTE);
+            currTime = ""+(cal.get(Calendar.HOUR_OF_DAY)*60 + cal.get(Calendar.MINUTE));
             evaluateCondition(currTime);
         }           
         return previousEval;
@@ -56,7 +56,7 @@ public class RuleCondition implements Serializable
     public void setValue(String value)
     {
         if (!factorName.equals("time"))
-            this.value = Float.parseFloat(value);
+            this.value = Integer.parseInt(value);
         else
         {   // if condition factor is time, save value as minutes
             Calendar cal = Calendar.getInstance();
@@ -64,20 +64,18 @@ public class RuleCondition implements Serializable
 
             try {cal.setTime(sdf.parse(value));}
             catch (ParseException ex) { ex.printStackTrace();}
-            
-            this.value = cal.get(Calendar.HOUR)*60 + cal.get(Calendar.MINUTE);
+            this.value = Integer.parseInt(""+(cal.get(Calendar.HOUR_OF_DAY)*60 + cal.get(Calendar.MINUTE)));
         }
     }
     
-    public boolean evaluateCondition(String inValue)
+    public void evaluateCondition(String inValue)
     {
         try
         {
-            float v = Float.parseFloat(inValue);
+            int v = Integer.parseInt(inValue);
             previousEval = (isBigger) ? (v > value) : (v < value);
-            return previousEval;
         }
-        catch (NumberFormatException e) {return previousEval = false;}
+        catch (NumberFormatException e) {e.printStackTrace();}
     }
     
     @Override

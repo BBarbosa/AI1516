@@ -6,25 +6,25 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import java.util.Date;
 
-public class InterfaceValueRefresher extends CyclicBehaviour
+public class InterfaceTickerBehaviour extends CyclicBehaviour
 {
     private InterfaceAgent agente;
     private long refreshRate;
     private long lastRefresh;
     
-    public InterfaceValueRefresher(InterfaceAgent a)
+    public InterfaceTickerBehaviour(InterfaceAgent a)
     {
         agente = a;
         refreshRate = 3000;
         lastRefresh = (new Date()).getTime();
     }
     
-    private void sendMsg(String agentName, String msgContent)
+    private void sendMsg(String agentName, int performative, String msgContent)
     {
         AID receiver = new AID();
         receiver.setLocalName(agentName);
 
-        ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
+        ACLMessage msg = new ACLMessage(performative);
         int cnvId = agente.getNewConvoId();
         msg.setConversationId(cnvId+"");
         msg.addReceiver(receiver);
@@ -46,11 +46,19 @@ public class InterfaceValueRefresher extends CyclicBehaviour
         
         long currentTime = (new Date()).getTime();
         
-        
         if (currentTime - lastRefresh > refreshRate)
         {
+            // process rules
+            for (Rule r : agente.automationProfile)
+            {
+                String resAction = r.evaluateRule();
+                if (resAction != null)
+                    sendMsg("interface",ACLMessage.INFORM,"rule."+resAction);
+            }
+            
+            // send value requests for every active sensor, to refresh their values
             for (String as : agente.activeSensors)
-                sendMsg("controller",as+".value");
+                sendMsg("controller",ACLMessage.REQUEST,as+".value");
         
             lastRefresh = currentTime;
             block(refreshRate);

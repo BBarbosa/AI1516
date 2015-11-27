@@ -69,35 +69,6 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         printLog("Scanned Sensors!");
     }
     
-    private void processRules(String sensorName, String content)
-    {
-        for (Rule r : agente.automationProfile)
-        {
-            // Process rule
-            if (r.getActive())
-            {
-                // if a rule sensor is offline, skip evaluation
-                Boolean carryOn = true;
-                for (String ruleSensor : r.getRuleSensors())
-                    if (!ruleSensor.equals("time") && !agente.activeSensors.contains(ruleSensor))
-                    {
-                        carryOn = false;
-                        r.setOn(false);
-                        System.out.println("RuleSensor: "+ruleSensor);
-                    }
-
-                if (carryOn)
-                {
-                    String evalResult = r.evaluateRule(sensorName, content);
-                    if (evalResult != null)
-                        printLog(evalResult);   
-                }
-            }
-            else
-                r.setOn(false);
-        }
-    }
-    
     public void processSensorValue(String content, Integer id)
     {
         String sensorName = agente.requestMap.get(id).split("[.]")[0];
@@ -124,7 +95,10 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
             }
         }
         
-        processRules(sensorName, content);
+        // refresh rule conditions with new value
+        for (Rule r : agente.automationProfile)
+            if (r.getRuleSensors().contains(sensorName))
+                r.refreshRuleConditions(sensorName, content);
     }
     
     public void processStatus(String content)
@@ -169,6 +143,8 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 case ACLMessage.INFORM:
                     if (requestContent.contains("scan"))
                         processScan(msg.getContent());
+                    else if (requestContent.contains("rule"))
+                        printLog(requestContent.split("[.]")[1]);
                     else
                         processSensorValue(msg.getContent(), Integer.parseInt(msg.getConversationId()));
                     break;
