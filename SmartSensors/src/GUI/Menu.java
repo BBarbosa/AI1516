@@ -1100,14 +1100,13 @@ public class Menu extends javax.swing.JFrame {
             if(this.getjTable2().getValueAt(i, 1).toString().equals(">")){ flag = true;}
             else{flag = false;}
             String factorName = (String)this.getjTable2().getValueAt(i, 0);
-            ruleCond = new RuleCondition(factorName, flag, Float.parseFloat((String) this.getjTable2().getValueAt(i, 2)));
+            ruleCond = new RuleCondition(factorName, flag, (String) this.getjTable2().getValueAt(i, 2));
             i++;
             conds.put(factorName, ruleCond);
         }
+        
         rule = new Rule(Boolean.FALSE, conds, this.getjTextField3().getText(), this.getjTextField1().getText());
         this.agente.automationProfile.add(rule);
-        
-          
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed

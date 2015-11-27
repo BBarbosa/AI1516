@@ -61,24 +61,27 @@ public class Rule implements Serializable
     public String evaluateRule(String sensorName, String inValue)
     {
         // update and evaluate ruleCondition
-        if (!conditions.get(sensorName).evaluateCondition(inValue) && on)
+        System.out.println(sensorName);
+        if (sensorName != null)
         {
-            on = false;
-            return offString;
-        }
-        else
-        {// check other RuleConditions
-            for (RuleCondition rc : conditions.values())
-                if (!rc.getPreviousEval())
-                    return null;
-
-            if (!on)
+            if (!conditions.get(sensorName).evaluateCondition(inValue) && on)
             {
-                on = true;
-                return onString;
+                on = false;
+                return offString;
+            }
+            else
+            {// check other RuleConditions
+                for (RuleCondition rc : conditions.values())
+                    if (!rc.getPreviousEval())
+                        return null;
+
+                if (!on)
+                {
+                    on = true;
+                    return onString;
+                }
             }
         }
-
         return null;
     }
 

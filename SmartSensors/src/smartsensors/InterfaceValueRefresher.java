@@ -4,22 +4,19 @@ import jade.core.AID;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class InterfaceValueRefresher extends CyclicBehaviour
 {
     private InterfaceAgent agente;
-    private int cnvId;
     private long refreshRate;
-    private long timeStamp;
+    private long lastRefresh;
     
     public InterfaceValueRefresher(InterfaceAgent a)
     {
         agente = a;
-        cnvId = 0;
         refreshRate = 3000;
-        timeStamp = (new Date()).getTime();
+        lastRefresh = (new Date()).getTime();
     }
     
     private void sendMsg(String agentName, String msgContent)
@@ -28,7 +25,7 @@ public class InterfaceValueRefresher extends CyclicBehaviour
         receiver.setLocalName(agentName);
 
         ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
-        cnvId = agente.getNewConvoId();
+        int cnvId = agente.getNewConvoId();
         msg.setConversationId(cnvId+"");
         msg.addReceiver(receiver);
         
@@ -49,15 +46,16 @@ public class InterfaceValueRefresher extends CyclicBehaviour
         
         long currentTime = (new Date()).getTime();
         
-        if (currentTime - timeStamp > refreshRate)
+        
+        if (currentTime - lastRefresh > refreshRate)
         {
             for (String as : agente.activeSensors)
                 sendMsg("controller",as+".value");
         
-            timeStamp = currentTime;
+            lastRefresh = currentTime;
             block(refreshRate);
         }
         else
-            block(refreshRate - (currentTime - timeStamp));
+            block(refreshRate - (currentTime - lastRefresh));
     }
 }

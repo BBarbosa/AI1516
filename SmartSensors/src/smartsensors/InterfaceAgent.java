@@ -10,9 +10,9 @@ import javax.swing.JTextField;
 public class InterfaceAgent extends Agent
 {
     public Menu menu;
+    private Integer currentConvoId;
     public HashMap<Integer, String> requestMap;
     public ArrayList<String> activeSensors;
-    private Integer currentConvoId;
     public ArrayList<Rule> automationProfile;
     public HashMap <String, JTextField> labels;
     
@@ -24,6 +24,11 @@ public class InterfaceAgent extends Agent
     public void saveRequest(int id, String content)
     {
         synchronized(requestMap){requestMap.put(id,content);}
+    }
+    
+    public String getRequestContent(int id)
+    {
+        synchronized(requestMap){return requestMap.get(id);}
     }
     
     public void removeRequest(int id)
@@ -40,7 +45,6 @@ public class InterfaceAgent extends Agent
         activeSensors = new ArrayList<>();
         currentConvoId = 0;
         labels =  new HashMap<>();
-        
         automationProfile = new ArrayList<>();
         
         ParallelBehaviour par = new ParallelBehaviour(this, ParallelBehaviour.WHEN_ANY);
@@ -50,14 +54,8 @@ public class InterfaceAgent extends Agent
         
         this.addBehaviour(par);
         
-        this.menu =  new Menu();
-        for (int i = 0; i<this.menu.getjTable1().getRowCount(); i++)
-        {
-            this.menu.getjTable1().setValueAt(false, i, 2);
-           
-        }
-        
-
+        // opens interface window
+        this.menu = new Menu();
         this.menu.setAgente(this);
         this.menu.setVisible(true);
     }

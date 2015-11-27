@@ -4,23 +4,21 @@ import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class RuleCondition implements Serializable
 {
     private String factorName;
     private Boolean isBigger;
     private float value;
+    private Boolean previousEval;
     
-    private Boolean isSensor;
-    private Boolean currentEval;
-    
-    public RuleCondition(String fn, Boolean b, float v)
+    public RuleCondition(String fn, Boolean b, String v)
     {
         factorName = fn;
         isBigger = b;
-        value = v;
-        isSensor = (fn.equals("time"));
-        currentEval = false;
+        setValue(v);
+        previousEval = false;
     }
     
     public String getFactorName() {
@@ -30,29 +28,37 @@ public class RuleCondition implements Serializable
     public Boolean getBigger() {
         return isBigger;
     }
-
-    public float getValue() {
-        return value;
-    }
     
     public Boolean getPreviousEval() {
-        return currentEval;
+        if (factorName.contains("time"))
+        {
+            String currTime = new SimpleDateFormat("HH:mm").format(new Date());
+            Calendar cal = Calendar.getInstance();
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+
+            try {cal.setTime(sdf.parse(currTime));}
+            catch (ParseException ex) { ex.printStackTrace();}
+            
+            currTime = ""+cal.get(Calendar.HOUR)*60 + cal.get(Calendar.MINUTE);
+            evaluateCondition(currTime);
+        }           
+        return previousEval;
     }
     
     public void setFactorName(String fn) {
         this.factorName = fn;
-        isSensor = (fn.equals("time"));
     }
 
     public void setBigger(Boolean b) {
         this.isBigger = b;
     }
 
-    public void setValue(String value) {
-        if (isSensor)
+    public void setValue(String value)
+    {
+        if (!factorName.equals("time"))
             this.value = Float.parseFloat(value);
         else
-        {
+        {   // if condition factor is time, save value as minutes
             Calendar cal = Calendar.getInstance();
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 
@@ -68,15 +74,15 @@ public class RuleCondition implements Serializable
         try
         {
             float v = Float.parseFloat(inValue);
-            currentEval = (isBigger) ? (v > value) : (v < value);
-            return currentEval;
+            previousEval = (isBigger) ? (v > value) : (v < value);
+            return previousEval;
         }
-        catch (NumberFormatException e) {return currentEval;}
+        catch (NumberFormatException e) {return previousEval = false;}
     }
     
     @Override
     public String toString()
     {
-        return factorName + ((isBigger)?" > ":" < ") + value;
+        return "( " + factorName + ((isBigger)?" > ":" < ") + value + " )";
     }
 }

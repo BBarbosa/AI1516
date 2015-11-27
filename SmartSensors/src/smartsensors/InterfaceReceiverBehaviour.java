@@ -5,39 +5,22 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import static jade.lang.acl.MessageTemplate.or;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import smartsensors.ProfileManager;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
     private InterfaceAgent agente;
-    private int fst;
-    private Rule r1;
-    private Rule r2;
     
     public InterfaceReceiverBehaviour(InterfaceAgent a)
     {
-        fst = 0;
         agente = a;
-        
-        // TEST RULE
-        RuleCondition rc1 = new RuleCondition("r1temp", true, 20);
-        RuleCondition rc2 = new RuleCondition("r2temp", true, 20);
-        HashMap<String, RuleCondition> myConditions = new HashMap<>();
-        myConditions.put("r1temp",rc1);
-        myConditions.put("r2temp",rc2);
-        
-        r1 = new Rule(true, myConditions,"Ligou", "Desligou");
-        
-        if (ProfileManager.saveProfile(r1,"myProfile"))
-            r2 = ProfileManager.loadProfile("myProfile");
-        else System.out.println("Could not load file!");
     }
 
     public void printLog(String txt)
@@ -53,44 +36,66 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     {
         // if scan found something
         int currentLine = 0;
-        String[] agentTypes = content.split("[\n]");
         DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable1().getModel();
-        int padding =20;            
+        int padding =20;
+        defaultModel.setRowCount(0);
+        
+        String[] agentTypes = content.split("[\n]");
+        
         for (String at : agentTypes)
         {
             String[] agentNames = at.split("[.]");
             for (int j = 1; j < agentNames.length; j++)
             {
-                if(fst == 0){
-                
-                    Vector newRow = new Vector();
-                    newRow.add(agentNames[j]);
-                    newRow.add(agentNames[0]);
-                    newRow.add(false);
-                    defaultModel.addRow(newRow);  
-                    this.agente.menu.getjTable1().setModel(defaultModel);
-                    
-                     
-            JTextField label = new JTextField();
-            label.setBounds(0, padding , 100, 20);
-            label.setName(agentNames[j]);
-            this.agente.menu.getjPanel1().add(label);
-            label.setVisible(false);
-            
-            this.agente.labels.put((String) agentNames[j], label);
-                    
-                    
-                    
-                }else{
-                    agente.menu.getjTable1().setValueAt(agentNames[j], currentLine + (j-1), 0);
-                    agente.menu.getjTable1().setValueAt(agentNames[0], currentLine + (j-1), 1);
-                }
+                // refresh table
+                Vector newRow = new Vector();
+                newRow.add(agentNames[j]);
+                newRow.add(agentNames[0]);
+                newRow.add(agente.activeSensors.contains(agentNames[j]));
+                defaultModel.addRow(newRow);  
+                this.agente.menu.getjTable1().setModel(defaultModel);
+
+                JTextField label = new JTextField();
+                label.setBounds(0, padding , 100, 20);
+                label.setName(agentNames[j]);
+                this.agente.menu.getjPanel1().add(label);
+                label.setVisible(false);
+
+                this.agente.labels.put((String) agentNames[j], label);
             }
             currentLine += agentNames.length - 1;
             padding=padding*2;
         }
-        fst = 1;
         printLog("Scanned Sensors!");
+    }
+    
+    private void processRules(String sensorName, String content)
+    {
+        for (Rule r : agente.automationProfile)
+        {
+            // Process rule
+            if (r.getActive())
+            {
+                // if a rule sensor is offline, skip evaluation
+                Boolean carryOn = true;
+                for (String ruleSensor : r.getRuleSensors())
+                    if (!ruleSensor.equals("time") && !agente.activeSensors.contains(ruleSensor))
+                    {
+                        carryOn = false;
+                        r.setOn(false);
+                        System.out.println("RuleSensor: "+ruleSensor);
+                    }
+
+                if (carryOn)
+                {
+                    String evalResult = r.evaluateRule(sensorName, content);
+                    if (evalResult != null)
+                        printLog(evalResult);   
+                }
+            }
+            else
+                r.setOn(false);
+        }
     }
     
     public void processSensorValue(String content, Integer id)
@@ -102,9 +107,11 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         System.out.println("SENSOR VALUE: "+content);
         
         this.agente.labels.get(sensorName).setText("Sensor: "+sensorName+" = "+content);
+
+        Matcher m = Pattern.compile("[0-9]").matcher(content);
         
-        // should match a regex expression instead
-        if (!content.contains("X")) {
+        if (m.find())
+        {
             //sensorName example: sensorType-div
             String type = sensorName.split("-")[0]; 
             String div = sensorName.split("-")[1];
@@ -116,40 +123,15 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break; 
             }
         }
-            
         
-        for (Rule r : agente.automationProfile)
-        {
-            // Process rule
-            if (r.getActive())
-            {
-                // if a rule sensor is offline, skip evaluation
-                Boolean carryOn = true;
-                for (String ruleSensor : r.getRuleSensors())
-                    if (!agente.activeSensors.contains(ruleSensor))
-                    {
-                        carryOn = false;
-                        r.setOn(false);
-                        System.out.println("RuleSensor: "+ruleSensor);
-                    }
-
-                if (carryOn)
-                {
-                    System.out.println("chega2");
-                    String evalResult = r.evaluateRule(sensorName, content);
-                    if (evalResult != null)
-                        printLog(evalResult);   
-                }
-            }
-            else
-                r.setOn(false);
-        }
+        processRules(sensorName, content);
     }
     
     public void processStatus(String content)
     {
         String[] tokens = content.split("[.]");
         printLog("Agent "+tokens[0]+" is now "+tokens[1]+"!");
+        
         Boolean checkboxValue = true;
         
         if (tokens[1].equals("online")) 
@@ -161,8 +143,8 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         }
         
         JTable table = agente.menu.getjTable1();
-        // com o nº de linhas ajustado ao nº de sensores pode-se remover esta segunda pate
-        for(int i = 0; i < table.getRowCount() && table.getValueAt(i, 0)!=null; i++)
+
+        for(int i = 0; i < table.getRowCount(); i++)
             if(table.getValueAt(i, 0).equals(tokens[0]))
                 table.setValueAt(checkboxValue, i, 2);
     }
@@ -179,7 +161,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         
         if (msg != null)
         {
-            String requestContent = agente.requestMap.get(Integer.parseInt(msg.getConversationId()));
+            String requestContent = agente.getRequestContent(Integer.parseInt(msg.getConversationId()));
             System.out.println("Request "+msg.getConversationId()+" done. Content: "+requestContent+"\n*\n");
 
             switch (msg.getPerformative())
@@ -198,6 +180,8 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 case ACLMessage.FAILURE:
                     printLog("Failed request "+msg.getConversationId()+" - "
                             +requestContent+". Reason: "+msg.getContent());
+                    if (requestContent.contains("value"))
+                        agente.activeSensors.remove(requestContent.split("[.]")[0]);
                     break;
                     
                 case ACLMessage.NOT_UNDERSTOOD:
