@@ -5,6 +5,7 @@ import jade.core.Agent;
 import jade.core.behaviours.ParallelBehaviour;
 import java.util.ArrayList;
 import java.util.HashMap;
+import javax.swing.JButton;
 import javax.swing.JTextField;
 
 public class InterfaceAgent extends Agent
@@ -14,7 +15,7 @@ public class InterfaceAgent extends Agent
     public HashMap<Integer, String> requestMap;
     public ArrayList<String> activeSensors;
     public ArrayList<Rule> automationProfile;
-    public HashMap <String, JTextField> labels;
+    public HashMap <String, JButton> labels;
     
     public synchronized int getNewConvoId()
     {

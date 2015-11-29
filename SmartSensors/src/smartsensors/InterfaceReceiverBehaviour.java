@@ -4,6 +4,11 @@ import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import static jade.lang.acl.MessageTemplate.or;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
@@ -11,15 +16,19 @@ import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
     private InterfaceAgent agente;
+    public int fst;
     
     public InterfaceReceiverBehaviour(InterfaceAgent a)
     {
+        fst = 0;
         agente = a;
     }
 
@@ -37,7 +46,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         // if scan found something
         int currentLine = 0;
         DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable1().getModel();
-        int padding =20;
+        int padding =0;
         defaultModel.setRowCount(0);
         
         String[] agentTypes = content.split("[\n]");
@@ -54,18 +63,55 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 newRow.add(agente.activeSensors.contains(agentNames[j]));
                 defaultModel.addRow(newRow);  
                 this.agente.menu.getjTable1().setModel(defaultModel);
+                
+                if (fst == 0){
+                    JButton label = new JButton();
+                    label.setBounds(padding, 0 , 40, 40);
+                    label.setName(agentNames[j]);
+                    
+                    Path path = Paths.get("images/"+agentNames[0]+".png");
 
-                JTextField label = new JTextField();
-                label.setBounds(0, padding , 100, 20);
-                label.setName(agentNames[j]);
-                this.agente.menu.getjPanel1().add(label);
-                label.setVisible(false);
+                    if (Files.exists(path)) {
+                      // file exist
+                        ImageIcon img;
+       
+                        img = new ImageIcon("images/"+agentNames[0]+".png");
 
-                this.agente.labels.put((String) agentNames[j], label);
+                        label.setIcon(img);
+                    }
+                    
+                    else{
+                        ImageIcon img;
+       
+                        img = new ImageIcon("images/sensor.png");
+
+                        label.setIcon(img);
+                   }
+                    
+            
+                    label.addMouseMotionListener(new MouseAdapter(){
+
+                            @Override
+                            public void mouseDragged(MouseEvent E)
+                            {
+                               int X=E.getX()+label.getX();
+                               int Y=E.getY()+label.getY();
+                               label.setBounds(X,Y,100,40);
+                            }
+                        });
+
+
+                    this.agente.menu.getjPanel1().add(label);
+                    label.setVisible(true);
+                    this.agente.labels.put((String) agentNames[j], label);
+                }
+               
             }
             currentLine += agentNames.length - 1;
-            padding=padding*2;
+            padding=padding+40;
+            
         }
+        fst = 1;
         printLog("Scanned Sensors!");
     }
     
@@ -77,23 +123,24 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         System.out.println("SENSOR:"+sensorName);
         System.out.println("SENSOR VALUE: "+content);
         
-        this.agente.labels.get(sensorName).setText("Sensor: "+sensorName+" = "+content);
+        this.agente.labels.get(sensorName).setText(content);
 
         Matcher m = Pattern.compile("[0-9]").matcher(content);
         
-        if (m.find())
-        {
-            //sensorName example: sensorType-div
-            String type = sensorName.split("-")[0]; 
-            String div = sensorName.split("-")[1];
-            switch(type) {
-                case "temp" : agente.menu.addTemp(Integer.parseInt(content), div); break;
-                case "humi" : agente.menu.addHum(Integer.parseInt(content), div); break;
-                case "mov" : agente.menu.addMov(Integer.parseInt(content), div); break;
-                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), div); break;
-                case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break; 
-            }
-        }
+        //meti a comentario pq me tava a crashar 
+//        if (m.find())
+//        {
+//            //sensorName example: sensorType-div
+//            String type = sensorName.split("-")[0]; 
+//            String div = sensorName.split("-")[1];
+//            switch(type) {
+//                case "temp" : agente.menu.addTemp(Integer.parseInt(content), div); break;
+//                case "humi" : agente.menu.addHum(Integer.parseInt(content), div); break;
+//                case "mov" : agente.menu.addMov(Integer.parseInt(content), div); break;
+//                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), div); break;
+//                case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break; 
+//            }
+//        }
         
         // refresh rule conditions with new value
         for (Rule r : agente.automationProfile)
