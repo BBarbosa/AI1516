@@ -72,7 +72,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                     Path path = Paths.get("images/"+agentNames[0]+".png");
 
                     if (Files.exists(path)) {
-                      // file exist
+                    // file exist
                         ImageIcon img;
        
                         img = new ImageIcon("images/"+agentNames[0]+".png");

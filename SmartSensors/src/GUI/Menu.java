@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
@@ -1011,22 +1013,45 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
-        // TODO add your handling code here:
-        int i = 0;
+        
         Boolean flag;
         RuleCondition ruleCond;
         Rule rule;
         HashMap <String, RuleCondition> conds = new HashMap<>();
+        int currentTimeFactor = 0;
 
-        while(i < this.getjTable2().getRowCount() && this.getjTable2().getRowCount() > 0){
-
-            if(this.getjTable2().getValueAt(i, 1).toString().equals(">")){ flag = true;}
-            else{flag = false;}
-            String factorName = (String)this.getjTable2().getValueAt(i, 0);
-            ruleCond = new RuleCondition(factorName, flag, (String) this.getjTable2().getValueAt(i, 2));
-            i++;
-            conds.put(factorName, ruleCond);
-        }
+        if (this.getjTable2().getRowCount() > 0)
+            for(int i = 0; i < this.getjTable2().getRowCount(); i++)
+            {
+                flag = this.getjTable2().getValueAt(i, 1).toString().equals(">");
+                String factorName = (String)this.getjTable2().getValueAt(i, 0);
+                String value = (String) this.getjTable2().getValueAt(i, 2);
+                
+                if (!value.equals("") && !factorName.equals(""))
+                {
+                    if (factorName.equals("time"))
+                    {
+                        Pattern r = Pattern.compile("[0-9]{2}\\:[0-9]{2}");
+                        Matcher m = r.matcher(value);
+                        if (!m.matches())
+                            return;// TODO error window "Must provide valid value for factorName"
+                        
+                        if (conds.containsKey("time")) factorName += ++currentTimeFactor;
+                    }
+                    else
+                    {
+                        Pattern r = Pattern.compile("[0-9]+");
+                        Matcher m = r.matcher(value);
+                        if (!m.matches())
+                            return;// TODO error window "Must provide valid value for factorName"
+                    }
+                    
+                    ruleCond = new RuleCondition(factorName, flag, value);
+                    conds.put(factorName, ruleCond);
+                }
+                else
+                    return;// TODO error window "Must provide a value"
+            }
 
         rule = new Rule(Boolean.FALSE, conds, this.getjTextField3().getText(), this.getjTextField1().getText());
         this.agente.automationProfile.add(rule);
@@ -1055,20 +1080,20 @@ public class Menu extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
-
         JFileChooser fc = new JFileChooser();
         fc.showOpenDialog(this);
 
         File selFile = fc.getSelectedFile();
+        
+        if (selFile == null)
+            return;
+        
+        System.out.println(selFile);
+        
         String filePath;
         filePath = selFile.getPath();
 
-        System.out.println(filePath);
         this.agente.automationProfile = ProfileManager.loadProfile(filePath);
-        //falta log
-
-        System.out.println("Loaded!");
 
         DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable4().getModel();
         int i = this.agente.menu.getjTable4().getRowCount();
@@ -1090,13 +1115,16 @@ public class Menu extends javax.swing.JFrame {
         }
 
         this.agente.menu.getjTable4().setModel(defaultModel);
-
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable2().getModel();
         Vector newRow = new Vector();
-        newRow.add(this.jTable1.getValueAt(this.jTable1.getSelectedRow(), 0));
+        int selRow = this.jTable1.getSelectedRow();
+        if (selRow < 0)
+            return; //TODO error window
+        
+        newRow.add(this.jTable1.getValueAt(selRow, 0));
         newRow.add(">");
         newRow.add("");
         defaultModel.addRow(newRow);

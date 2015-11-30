@@ -55,7 +55,7 @@ public class RuleCondition implements Serializable
 
     public void setValue(String value)
     {
-        if (!factorName.equals("time"))
+        if (!factorName.contains("time"))
             this.value = Integer.parseInt(value);
         else
         {   // if condition factor is time, save value as minutes
@@ -81,6 +81,6 @@ public class RuleCondition implements Serializable
     @Override
     public String toString()
     {
-        return "( " + factorName + ((isBigger)?" > ":" < ") + value + " )";
+        return "(" + factorName + ((isBigger)?" > ":" < ") + value + ")";
     }
 }

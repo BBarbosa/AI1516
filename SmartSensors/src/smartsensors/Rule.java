@@ -90,19 +90,24 @@ public class Rule implements Serializable
             else
                 return null;
         }
+        else if (on)
+        {
+            on = false;
+            return offString;
+        }
         
         return null;
     }
 
     public String ruleString()
     {
-        String s = null;
+        String s = "";
 
         Collection<RuleCondition> rcCol = conditions.values();
         RuleCondition[] rcs = rcCol.toArray(new RuleCondition[rcCol.size()]);
 
         for (int i = 0; i < rcs.length - 1; i++)
-            s += rcs[i].toString() + " AND ";
+            s += rcs[i].toString() + " + ";
 
         s += rcs[rcs.length - 1].toString() + " -> " + onString;
 
