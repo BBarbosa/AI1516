@@ -44,7 +44,7 @@ public class arduinoTemp extends Agent {
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setName(getLocalName());
-        sd.setType("temp");
+        sd.setType("arduino");
         dfd.addServices(sd);
 
         try{ DFService.register(this, dfd );}
@@ -157,6 +157,36 @@ public class arduinoTemp extends Agent {
 
                             reply.setContent(n + "");
                             reply.setPerformative(ACLMessage.INFORM);
+                            myAgent.send(reply);
+                        }
+                        else
+                        {
+                            reply.setPerformative(ACLMessage.FAILURE);
+                            myAgent.send(reply);
+                        }
+                    }
+                    if (msg.getContent().equals("turnon"))
+                    {
+                        if (isSensorState())
+                        {
+                            getSerial().writeData(2);
+                            System.out.println("Led green "+myAgent.getLocalName()+" is now on!");
+                            reply.setPerformative(ACLMessage.CONFIRM);
+                            myAgent.send(reply);
+                        }
+                        else
+                        {
+                            reply.setPerformative(ACLMessage.FAILURE);
+                            myAgent.send(reply);
+                        }
+                    }
+                    if (msg.getContent().equals("turnoff"))
+                    {
+                        if (isSensorState())
+                        {
+                            getSerial().writeData(1);
+                            System.out.println("Led red "+myAgent.getLocalName()+" is now on!");
+                            reply.setPerformative(ACLMessage.CONFIRM);
                             myAgent.send(reply);
                         }
                         else

@@ -53,7 +53,16 @@ public class InterfaceTickerBehaviour extends CyclicBehaviour
             {
                 String resAction = r.evaluateRule();
                 if (resAction != null)
+                {
                     sendMsg("interface",ACLMessage.INFORM,"rule."+resAction);
+                    if(resAction.equals("ligar led verde")){
+                        sendMsg("controller",ACLMessage.REQUEST,"arduinoTemp.turnon");
+                    }
+                    else if(resAction.equals("ligar led vermelho"))
+                    {
+                        sendMsg("controller",ACLMessage.REQUEST,"arduinoTemp.turnoff");
+                    }
+                }
             }
             
             // send value requests for every active sensor, to refresh their values

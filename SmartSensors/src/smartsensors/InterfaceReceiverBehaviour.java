@@ -128,19 +128,19 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         Matcher m = Pattern.compile("[0-9]").matcher(content);
         
         //meti a comentario pq me tava a crashar 
-//        if (m.find())
-//        {
-//            //sensorName example: sensorType-div
-//            String type = sensorName.split("-")[0]; 
-//            String div = sensorName.split("-")[1];
-//            switch(type) {
-//                case "temp" : agente.menu.addTemp(Integer.parseInt(content), div); break;
-//                case "humi" : agente.menu.addHum(Integer.parseInt(content), div); break;
-//                case "mov" : agente.menu.addMov(Integer.parseInt(content), div); break;
-//                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), div); break;
-//                case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break; 
-//            }
-//        }
+        if (m.find() && sensorName.contains("-"))
+        {
+            //sensorName example: sensorType-div
+            String type = sensorName.split("-")[0]; 
+            String div = sensorName.split("-")[1];
+            switch(type) {
+                case "temp" : agente.menu.addTemp(Integer.parseInt(content), div); break;
+                case "humi" : agente.menu.addHum(Integer.parseInt(content), div); break;
+                case "mov" : agente.menu.addMov(Integer.parseInt(content), div); break;
+                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), div); break;
+                case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break; 
+            }
+        }
         
         // refresh rule conditions with new value
         for (Rule r : agente.automationProfile)

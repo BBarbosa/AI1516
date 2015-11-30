@@ -21,7 +21,8 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
         HUMI {public String toString() {return "humi";}},
         MOVE {public String toString() {return "move";}},
         LUX {public String toString() {return "lux";}},
-        SMOKE {public String toString() {return "smoke";}}
+        SMOKE {public String toString() {return "smoke";}},
+        ARDUINO {public String toString() {return "arduino";}} 
     }
         
     public RequestProcesserBehaviour(ControllerAgent a)
@@ -102,6 +103,10 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                     sendMsg(agentName, msg.getConversationId(), "offline", ACLMessage.REQUEST);
                 else if (line.contains("value"))
                     sendMsg(agentName, msg.getConversationId(), "value", ACLMessage.REQUEST);
+                else if (line.contains("turnon"))
+                    sendMsg(agentName, msg.getConversationId(), "turnon", ACLMessage.REQUEST);
+                else if (line.contains("turnoff"))
+                    sendMsg(agentName, msg.getConversationId(), "turnoff", ACLMessage.REQUEST);
                 else
                     sendMsg("interface", msg.getConversationId(),"Unrecognized requested operation!", ACLMessage.NOT_UNDERSTOOD);
             }

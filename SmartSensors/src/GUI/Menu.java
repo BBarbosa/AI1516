@@ -244,7 +244,7 @@ public class Menu extends javax.swing.JFrame {
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,616,482);
+        charPanel.setBounds(0,0,644,524);
         jPanel4.removeAll();
         jPanel4.add(charPanel,BorderLayout.CENTER);
         jPanel4.validate();
@@ -263,7 +263,7 @@ public class Menu extends javax.swing.JFrame {
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,616,482);
+        charPanel.setBounds(0,0,644,524);
         jPanel5.removeAll();
         jPanel5.add(charPanel,BorderLayout.CENTER);
         jPanel5.validate();
@@ -282,7 +282,7 @@ public class Menu extends javax.swing.JFrame {
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,616,482);
+        charPanel.setBounds(0,0,644,524);
         jPanel6.removeAll();
         jPanel6.add(charPanel,BorderLayout.CENTER);
         jPanel6.validate();
@@ -301,7 +301,7 @@ public class Menu extends javax.swing.JFrame {
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,616,482);
+        charPanel.setBounds(0,0,644,524);
         jPanel7.removeAll();
         jPanel7.add(charPanel,BorderLayout.CENTER);
         jPanel7.validate();
@@ -320,7 +320,7 @@ public class Menu extends javax.swing.JFrame {
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,616,482);
+        charPanel.setBounds(0,0,644,524);
         jPanel8.removeAll();
         jPanel8.add(charPanel,BorderLayout.CENTER);
         jPanel8.validate();
