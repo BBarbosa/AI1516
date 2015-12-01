@@ -11,11 +11,11 @@ public class SerialPortCommunication {
 
   //SerialPort
   public SerialPort serialPort;
-  //The port we're normally going to use.
+  //Arduino Port
   private static final String PORT_NAMES[] = {
       "/dev/cu.usbmodem1421"
-      //"/dev/tty.usbmodem"
-      //"/dev/tty.usbserial-A9007UX1" // Mac OS X
+      //"/dev/tty.usbmodem",
+      //"/dev/tty.usbserial-A9007UX1", // Mac OS X
       //"/dev/ttyUSB0", // Linux
       //"COM4", // Windows
   };
@@ -28,50 +28,44 @@ public class SerialPortCommunication {
   public static final int DATA_RATE = 9600;
   
   
-  public void initialize() {
-      
-    CommPortIdentifier portId = null;
-    Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
-    //First, Find an instance of serial port as set in PORT_NAMES.
-    while (portEnum.hasMoreElements()) {
-       CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
-       for (String portName : PORT_NAMES) {
-         if (currPortId.getName().equals(portName)) {
-            portId = currPortId;
-            System.out.println( "Connected on port" + currPortId.getName() );
-            break;
-         }
-       }
-    }
-    if (portId == null) {
-       System.out.println("Could not find port.");
-       return;
-    }
-    try {
-       // open serial port, and use class name for the appName.
-       serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
-       // set port parameters
-       serialPort.setSerialPortParams(DATA_RATE,
-            SerialPort.DATABITS_8,
-            SerialPort.STOPBITS_1,
-            SerialPort.PARITY_NONE);
-       // open the streams for reading and writing in the serial port
-       input = new BufferedReader(new 
-               InputStreamReader(serialPort.getInputStream()));
-       output = serialPort.getOutputStream();
-    } catch (Exception e) {
-      System.err.println(e.toString());
-    }
+    public void initialize() {
+        CommPortIdentifier portId = null;
+        Enumeration portEnum = CommPortIdentifier.getPortIdentifiers();
+        //Find an instance of serial port as set in PORT_NAMES.
+        while (portEnum.hasMoreElements()) {
+           CommPortIdentifier currPortId = (CommPortIdentifier) portEnum.nextElement();
+           for (String portName : PORT_NAMES) {
+             if (currPortId.getName().equals(portName)) {
+                portId = currPortId;
+                System.out.println( "Connected on port" + currPortId.getName() );
+                break;
+             }
+           }
+        }
+        if (portId == null) {
+           System.out.println("Error: Could not find port.");
+           return;
+        }
+        try {
+           // open serial port, and use class name for the appName.
+           serialPort = (SerialPort) portId.open(this.getClass().getName(), TIME_OUT);
+           // set port parameters
+           serialPort.setSerialPortParams(DATA_RATE, SerialPort.DATABITS_8, SerialPort.STOPBITS_1, SerialPort.PARITY_NONE);
+           // open the streams for reading and writing in the serial port
+           input = new BufferedReader(new InputStreamReader(serialPort.getInputStream()));
+           output = serialPort.getOutputStream();
+        } catch (Exception e) {
+          System.err.println(e.toString());
+        }
     }
   
     
     public void writeData(int data) {
         try {
             //write data in the serial port
-            //output.write(data.getBytes());
             output.write(data);
         } catch (Exception e) {
-            System.out.println("could not write to port");
+            System.out.println("Error: could not write to port");
         }
     }
   

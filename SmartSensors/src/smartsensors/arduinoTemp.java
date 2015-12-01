@@ -21,7 +21,6 @@ import java.util.Random;
 public class arduinoTemp extends Agent {
     private boolean sensorState = false;
     private boolean finished = false;
-    private int last = new Random().nextInt(60);
     private SerialPortCommunication serial = new SerialPortCommunication();
 
     @Override
@@ -74,14 +73,6 @@ public class arduinoTemp extends Agent {
             this.finished = finished;
     }
 
-    public int getLast() {
-        return last;
-    }
-
-    public void setLast(int last) {
-        this.last = last;
-    }
-
     public SerialPortCommunication getSerial() {
         return serial;
     }
@@ -89,8 +80,6 @@ public class arduinoTemp extends Agent {
     public void setSerial(SerialPortCommunication serial) {
         this.serial = serial;
     }
-
-
 
     private class ReceiveBehaviour extends CyclicBehaviour
     {
