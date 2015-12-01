@@ -9,6 +9,8 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import jade.domain.FIPAException;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
+import jade.wrapper.AgentContainer;
+import jade.wrapper.AgentController;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -60,6 +62,39 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
             Matcher m = r.matcher(line);
             line = m.replaceAll("");
             
+            //Create new Agent
+            boolean created = false;
+            if (line.contains("create")){
+                String[] split = line.split("\\.");
+                String name = split[1];
+                String type = split[2];
+                
+                if(type.equals("temp")){
+                    type = "smartsensors.TempSensor";
+                }
+                else if(type.equals("humi")){
+                    type = "smartsensors.HumiditySensor";
+                }
+                else if(type.equals("move")){
+                    type = "smartsensors.MovementSensor";
+                }
+                else if(type.equals("lux")){
+                    type = "smartsensors.LuxSensor";
+                }
+                else if(type.equals("smoke")){
+                    type = "smartsensors.SmokeSensor";
+                }
+                
+                AgentContainer c = agente.getContainerController();
+                try {
+                    AgentController a = c.createNewAgent( name, type, null );
+                    a.start();
+                    created = true;
+                    System.out.println("Agent "+name+" created!");
+                }
+                catch (Exception e){ System.out.println(e); }
+            }
+            
             // get target agent name        
             String delims = "[.]";
             String[] tokens = msg.getContent().split(delims);
@@ -93,7 +128,7 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
             }
             
             // if target agent is no longer availabe, inform interface agent
-            if (availableAgents.contains(agentName))
+            if (availableAgents.contains(agentName) && !created)
             {            
                 if (line.equals(".scan"))
                     sendMsg("interface", msg.getConversationId(), availableAgents, ACLMessage.INFORM);   

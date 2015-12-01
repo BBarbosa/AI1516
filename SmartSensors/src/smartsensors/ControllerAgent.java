@@ -14,7 +14,7 @@ public class ControllerAgent extends Agent
         super.setup();
         convoIds = new ArrayList<>();
         System.out.println(this.getLocalName()+" starting!");
-
+        
         ParallelBehaviour par = new ParallelBehaviour(this, ParallelBehaviour.WHEN_ANY);
         par.addSubBehaviour(new RequestProcesserBehaviour(this));
         par.addSubBehaviour(new RelayerBehaviour(this));
