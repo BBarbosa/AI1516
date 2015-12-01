@@ -152,7 +152,8 @@ public class arduinoTemp extends Agent {
                             String n = "XXXXX";
                             if(s.contains(".")){
                                 String[] split = s.split("\\.");
-                                n = split[0];
+                                if(split.length < 3)
+                                    n = split[0];
                             }
 
                             reply.setContent(n + "");
@@ -169,8 +170,8 @@ public class arduinoTemp extends Agent {
                     {
                         if (isSensorState())
                         {
-                            getSerial().writeData(2);
-                            System.out.println("Led green "+myAgent.getLocalName()+" is now on!");
+                            getSerial().writeData(102);
+                            System.out.println("Green led "+myAgent.getLocalName()+" is now on!");
                             reply.setPerformative(ACLMessage.CONFIRM);
                             myAgent.send(reply);
                         }
@@ -184,8 +185,8 @@ public class arduinoTemp extends Agent {
                     {
                         if (isSensorState())
                         {
-                            getSerial().writeData(1);
-                            System.out.println("Led red "+myAgent.getLocalName()+" is now on!");
+                            getSerial().writeData(101);
+                            System.out.println("Red led "+myAgent.getLocalName()+" is now on!");
                             reply.setPerformative(ACLMessage.CONFIRM);
                             myAgent.send(reply);
                         }
