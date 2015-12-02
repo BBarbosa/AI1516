@@ -138,7 +138,8 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 case "humi" : agente.menu.addHum(Integer.parseInt(content), div); break;
                 case "mov" : agente.menu.addMov(Integer.parseInt(content), div); break;
                 case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), div); break;
-                case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break; 
+                case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break;
+                case "arduino" : agente.menu.addArduino(Integer.parseInt(content), div); break;
             }
         }
         

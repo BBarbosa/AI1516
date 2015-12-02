@@ -7,6 +7,7 @@ import jade.lang.acl.ACLMessage;
 import jade.wrapper.AgentController;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Label;
@@ -18,14 +19,19 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.scene.chart.ValueAxis;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -36,6 +42,7 @@ import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
+import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
@@ -52,36 +59,16 @@ import smartsensors.TempSensor;
 public class Menu extends javax.swing.JFrame {
     
     private InterfaceAgent agente;
+    
     /* temperature */
-    private TimeSeries tempLRoomDataset;
-    private TimeSeries tempKitchenDataset;
-    private TimeSeries tempGarageDataset;
-    private TimeSeries tempBr1Dataset;
-    private TimeSeries tempBr2Dataset;
-    /* humidity */
-    private TimeSeries humLRoomDataset;
-    private TimeSeries humKitchenDataset;
-    private TimeSeries humGarageDataset;
-    private TimeSeries humBr1Dataset;
-    private TimeSeries humBr2Dataset;
-    /* movement */
-    private TimeSeries movLRoomDataset;
-    private TimeSeries movKitchenDataset;
-    private TimeSeries movGarageDataset;
-    private TimeSeries movBr1Dataset;
-    private TimeSeries movBr2Dataset;
-    /* smoke */
-    private TimeSeries smokeLRoomDataset;
-    private TimeSeries smokeKitchenDataset;
-    private TimeSeries smokeGarageDataset;
-    private TimeSeries smokeBr1Dataset;
-    private TimeSeries smokeBr2Dataset;
-    /* luminosity */
-    private TimeSeries lumLRoomDataset;
-    private TimeSeries lumKitchenDataset;
-    private TimeSeries lumGarageDataset;
-    private TimeSeries lumBr1Dataset;
-    private TimeSeries lumBr2Dataset;
+    private DefaultCategoryDataset tempDataset;
+    private DefaultCategoryDataset humiDataset;
+    private DefaultCategoryDataset movDataset;
+    private DefaultCategoryDataset smokeDataset;
+    private DefaultCategoryDataset lumiDataset;
+    private DefaultCategoryDataset arduinoDataset;
+    
+    private ScheduledExecutorService exec;
     
     /**
      * Creates new form Menu
@@ -95,37 +82,18 @@ public class Menu extends javax.swing.JFrame {
         label.setOpaque(false);
         
         this.jPanel1.add( label );
-        /* temperature */
-        this.tempLRoomDataset = new TimeSeries("Living Room");
-        this.tempKitchenDataset = new TimeSeries("Kitchen");
-        this.tempGarageDataset = new TimeSeries("Garage");
-        this.tempBr1Dataset = new TimeSeries("Bedroom 1");
-        this.tempBr2Dataset = new TimeSeries("Bedroom 2");
-        /* humidity */
-        this.humLRoomDataset = new TimeSeries("Living Room");
-        this.humKitchenDataset = new TimeSeries("Kitchen");
-        this.humGarageDataset = new TimeSeries("Garage");
-        this.humBr1Dataset = new TimeSeries("Bedroom 1");
-        this.humBr2Dataset = new TimeSeries("Bedroom 2");
-        /* movement */
-        this.movLRoomDataset = new TimeSeries("Living Room");
-        this.movKitchenDataset = new TimeSeries("Kitchen");
-        this.movGarageDataset = new TimeSeries("Garage");
-        this.movBr1Dataset = new TimeSeries("Bedroom 1");
-        this.movBr2Dataset = new TimeSeries("Bedroom 2");
-        /* smoke */
-        this.smokeLRoomDataset = new TimeSeries("Living Room");
-        this.smokeKitchenDataset = new TimeSeries("Kitchen");
-        this.smokeGarageDataset = new TimeSeries("Garage");
-        this.smokeBr1Dataset = new TimeSeries("Bedroom 1");
-        this.smokeBr2Dataset = new TimeSeries("Bedroom 2");
-        /* luminosity */
-        this.lumLRoomDataset = new TimeSeries("Living Room");
-        this.lumKitchenDataset = new TimeSeries("Kitchen");
-        this.lumGarageDataset = new TimeSeries("Garage");
-        this.lumBr1Dataset = new TimeSeries("Bedroom 1");
-        this.lumBr2Dataset = new TimeSeries("Bedroom 2");
         
+        /* init datasets */
+        this.tempDataset = new DefaultCategoryDataset();
+        this.humiDataset = new DefaultCategoryDataset();
+        this.movDataset = new DefaultCategoryDataset();
+        this.smokeDataset = new DefaultCategoryDataset();
+        this.lumiDataset = new DefaultCategoryDataset();
+        this.arduinoDataset = new DefaultCategoryDataset();
+        
+        /* start thread */
+        chartUpdate chartUp = new chartUpdate(this);
+        new Thread(chartUp).start();
         
             ImageIcon img;
        
@@ -232,154 +200,146 @@ public class Menu extends javax.swing.JFrame {
     
     /* UPDATE CHARTS */
     public void updateTempChart() {
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(tempLRoomDataset);
-        dataset.addSeries(tempKitchenDataset);
-        dataset.addSeries(tempGarageDataset);
-        dataset.addSeries(tempBr1Dataset);
-        dataset.addSeries(tempBr2Dataset);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart("Temperature", "Time", "Temperature", dataset, true, true, false);
+        JFreeChart chart = ChartFactory.createLineChart("Temperature", "Time", "ºC", tempDataset,PlotOrientation.VERTICAL, true, true, false);
         
-        XYPlot catPlot = chart.getXYPlot();
+        
+        CategoryPlot catPlot = chart.getCategoryPlot();
         catPlot.setRangeGridlinePaint(Color.BLACK);
+        CategoryAxis axis = catPlot.getDomainAxis();
+        
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,644,524);
+        charPanel.setBounds(0,0,643,523);
         jPanel4.removeAll();
         jPanel4.add(charPanel,BorderLayout.CENTER);
         jPanel4.validate();
     }
     
     public void updateHumChart() {
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(humLRoomDataset);
-        dataset.addSeries(humKitchenDataset);
-        dataset.addSeries(humGarageDataset);
-        dataset.addSeries(humBr1Dataset);
-        dataset.addSeries(humBr2Dataset);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart("Humidity", "Time", "Humidity", dataset, true, true, false);
+        JFreeChart chart = ChartFactory.createLineChart("Humidity", "Time", "%", humiDataset,PlotOrientation.VERTICAL, true, true, false);
         
-        XYPlot catPlot = chart.getXYPlot();
+        CategoryPlot catPlot = chart.getCategoryPlot();
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,644,524);
+        charPanel.setBounds(0,0,643,523);
         jPanel5.removeAll();
         jPanel5.add(charPanel,BorderLayout.CENTER);
         jPanel5.validate();
     }
     
     public void updateMovChart() {
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(movLRoomDataset);
-        dataset.addSeries(movKitchenDataset);
-        dataset.addSeries(movGarageDataset);
-        dataset.addSeries(movBr1Dataset);
-        dataset.addSeries(movBr2Dataset);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart("Movement", "Time", "Movement", dataset, true, true, false);
-        
-        XYPlot catPlot = chart.getXYPlot();
+        JFreeChart chart = ChartFactory.createLineChart("Movement", "Time", "Move", movDataset,PlotOrientation.VERTICAL, true, true, false);
+
+        CategoryPlot catPlot = chart.getCategoryPlot();
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,644,524);
+        charPanel.setBounds(0,0,643,523);
         jPanel6.removeAll();
         jPanel6.add(charPanel,BorderLayout.CENTER);
         jPanel6.validate();
     }
     
     public void updateSmokeChart() {
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(smokeLRoomDataset);
-        dataset.addSeries(smokeKitchenDataset);
-        dataset.addSeries(smokeGarageDataset);
-        dataset.addSeries(smokeBr1Dataset);
-        dataset.addSeries(smokeBr2Dataset);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart("Smoke", "Time", "Smoke", dataset, true, true, false);
-        
-        XYPlot catPlot = chart.getXYPlot();
+        JFreeChart chart = ChartFactory.createLineChart("Smoke", "Time", "%", smokeDataset,PlotOrientation.VERTICAL, true, true, false);
+
+        CategoryPlot catPlot = chart.getCategoryPlot();
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,644,524);
+        charPanel.setBounds(0,0,643,523);
         jPanel7.removeAll();
         jPanel7.add(charPanel,BorderLayout.CENTER);
         jPanel7.validate();
     }
     
     public void updateLumChart() {
-        TimeSeriesCollection dataset = new TimeSeriesCollection();
-        dataset.addSeries(lumLRoomDataset);
-        dataset.addSeries(lumKitchenDataset);
-        dataset.addSeries(lumGarageDataset);
-        dataset.addSeries(lumBr1Dataset);
-        dataset.addSeries(lumBr2Dataset);
-        JFreeChart chart = ChartFactory.createTimeSeriesChart("Luminosity", "Time", "Luminosity", dataset, true, true, false);
-        
-        XYPlot catPlot = chart.getXYPlot();
+        JFreeChart chart = ChartFactory.createLineChart("Luminosity", "Time", "Level", lumiDataset,PlotOrientation.VERTICAL, true, true, false);
+
+        CategoryPlot catPlot = chart.getCategoryPlot();
         catPlot.setRangeGridlinePaint(Color.BLACK);
         
         ChartPanel charPanel = new ChartPanel(chart);
-        charPanel.setBounds(0,0,644,524);
+        charPanel.setBounds(0,0,643,523);
         jPanel8.removeAll();
         jPanel8.add(charPanel,BorderLayout.CENTER);
         jPanel8.validate();
     }
     
+    public void updateArduinoChart() {
+        JFreeChart chart = ChartFactory.createLineChart("Luminosity", "Time", "Level", lumiDataset,PlotOrientation.VERTICAL, true, true, false);
+
+        CategoryPlot catPlot = chart.getCategoryPlot();
+        catPlot.setRangeGridlinePaint(Color.BLACK);
+        
+        ChartPanel charPanel = new ChartPanel(chart);
+        charPanel.setBounds(0,0,643,523);
+        jPanel9.removeAll();
+        jPanel9.add(charPanel,BorderLayout.CENTER);
+        jPanel9.validate();
+    }
+    
+    public void updateAllCharts() {
+        this.updateTempChart();
+        this.updateHumChart();
+        this.updateMovChart();
+        this.updateSmokeChart();
+        this.updateLumChart();
+        this.updateArduinoChart();
+    }
+    
     /* ADD VALUES TO CHARTS */
     public void addTemp(int value, String div) {
-        switch(div) {
-            case "kitchen" :  this.tempKitchenDataset.addOrUpdate(new Second(), value); break;
-            case "lroom" : this.tempLRoomDataset.addOrUpdate(new Second(), value); break;
-            case "garage" : this.tempGarageDataset.addOrUpdate(new Second(), value); break;
-            case "br1" : this.tempBr1Dataset.addOrUpdate(new Second(), value); break;
-            case "br2" : this.tempBr2Dataset.addOrUpdate(new Second(), value); break;
-        }
-        this.updateTempChart();
+        this.tempDataset.addValue(value,div, new Second());
+        //this.updateTempChart();
     }
     
     public void addHum(int value, String div) {
-        switch(div) {
-            case "kitchen" :  this.humKitchenDataset.addOrUpdate(new Second(), value); break;
-            case "lroom" : this.humLRoomDataset.addOrUpdate(new Second(), value); break;
-            case "garage" : this.humGarageDataset.addOrUpdate(new Second(), value); break;
-            case "br1" : this.humBr1Dataset.addOrUpdate(new Second(), value); break;
-            case "br2" : this.humBr2Dataset.addOrUpdate(new Second(), value); break;
-        }
-        this.updateHumChart();
+        this.humiDataset.addValue(value,div,""+ new Second());
+        //this.updateHumChart();
     }
     
     public void addMov(int value, String div) {
-        switch(div) {
-            case "kitchen" :  this.movKitchenDataset.addOrUpdate(new Second(), value); break;
-            case "lroom" : this.movLRoomDataset.addOrUpdate(new Second(), value); break;
-            case "garage" : this.movGarageDataset.addOrUpdate(new Second(), value); break;
-            case "br1" : this.movBr1Dataset.addOrUpdate(new Second(), value); break;
-            case "br2" : this.movBr2Dataset.addOrUpdate(new Second(), value); break;
-        }
-        this.updateMovChart();
+        this.movDataset.addValue(value,div,""+ new Second());
+        //this.updateMovChart();
     }
     
     public void addSmoke(int value, String div) {
-        switch(div) {
-            case "kitchen" :  this.smokeKitchenDataset.addOrUpdate(new Second(), value); break;
-            case "lroom" : this.smokeLRoomDataset.addOrUpdate(new Second(), value); break;
-            case "garage" : this.smokeGarageDataset.addOrUpdate(new Second(), value); break;
-            case "br1" : this.smokeBr1Dataset.addOrUpdate(new Second(), value); break;
-            case "br2" : this.smokeBr2Dataset.addOrUpdate(new Second(), value); break;
-        }
-        this.updateSmokeChart();
+        this.smokeDataset.addValue(value,div,""+ new Second());
+        //this.updateSmokeChart();
     }
     
     public void addLum(int value, String div) {
-        switch(div) {
-            case "kitchen" :  this.lumKitchenDataset.addOrUpdate(new Second(), value); break;
-            case "lroom" : this.lumLRoomDataset.addOrUpdate(new Second(), value); break;
-            case "garage" : this.lumGarageDataset.addOrUpdate(new Second(), value); break;
-            case "br1" : this.lumBr1Dataset.addOrUpdate(new Second(), value); break;
-            case "br2" : this.lumBr2Dataset.addOrUpdate(new Second(), value); break;
+        this.lumiDataset.addValue(value,div, new Second());
+        //this.updateLumChart();
+    }
+    
+    public void addArduino(int value, String div) {
+        this.arduinoDataset.addValue(value, div, new Second());
+    }
+    
+    /* Chart auto update */
+    class chartUpdate implements Runnable {
+        public Menu m;
+        
+        public chartUpdate(Menu m) {
+            this.m = m;
         }
-        this.updateLumChart();
+        
+        public void run() {
+            exec = Executors.newSingleThreadScheduledExecutor();
+            exec.scheduleAtFixedRate(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        m.updateAllCharts();
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(new Frame(), "Dataset error!", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }, 0, 3, TimeUnit.SECONDS);
+        }
     }
     
     /* OTHERS METHODS */
@@ -536,6 +496,7 @@ public class Menu extends javax.swing.JFrame {
         jPanel6 = new javax.swing.JPanel();
         jPanel7 = new javax.swing.JPanel();
         jPanel8 = new javax.swing.JPanel();
+        jPanel9 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane3 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
@@ -656,6 +617,19 @@ public class Menu extends javax.swing.JFrame {
         );
 
         jTabbedPane2.addTab("Luminosity", jPanel8);
+
+        javax.swing.GroupLayout jPanel9Layout = new javax.swing.GroupLayout(jPanel9);
+        jPanel9.setLayout(jPanel9Layout);
+        jPanel9Layout.setHorizontalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 616, Short.MAX_VALUE)
+        );
+        jPanel9Layout.setVerticalGroup(
+            jPanel9Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 524, Short.MAX_VALUE)
+        );
+
+        jTabbedPane2.addTab("Arduino", jPanel9);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -782,33 +756,28 @@ public class Menu extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addGap(19, 19, 19)
-                                .addComponent(jLabel5))
-                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(jLabel4))
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                                .addComponent(jLabel3)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                            .addGroup(jPanel3Layout.createSequentialGroup()
-                                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
-                                                .addComponent(jButton7))))
-                                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 511, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(19, 19, 19)
+                        .addComponent(jLabel5))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(jButton1)
-                                    .addComponent(jButton8)
-                                    .addComponent(jButton9))))
-                        .addGap(0, 16, Short.MAX_VALUE))
+                                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 153, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jButton7))))
+                            .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 511, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1)
+                            .addComponent(jButton8)
+                            .addComponent(jButton9)))
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -845,7 +814,6 @@ public class Menu extends javax.swing.JFrame {
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 159, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(31, 31, 31)
                 .addComponent(jLabel6)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel4)
@@ -1192,6 +1160,7 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
