@@ -92,8 +92,9 @@ public class Menu extends javax.swing.JFrame {
         this.arduinoDataset = new DefaultCategoryDataset();
         
         /* start thread */
-        chartUpdate chartUp = new chartUpdate(this);
-        new Thread(chartUp).start();
+//        chartUpdate chartUp = new chartUpdate(this);
+//        new Thread(chartUp).start();
+        this.updateAllCharts();
         
             ImageIcon img;
        
@@ -202,11 +203,8 @@ public class Menu extends javax.swing.JFrame {
     public void updateTempChart() {
         JFreeChart chart = ChartFactory.createLineChart("Temperature", "Time", "ºC", tempDataset,PlotOrientation.VERTICAL, true, true, false);
         
-        
         CategoryPlot catPlot = chart.getCategoryPlot();
         catPlot.setRangeGridlinePaint(Color.BLACK);
-        CategoryAxis axis = catPlot.getDomainAxis();
-        
         
         ChartPanel charPanel = new ChartPanel(chart);
         charPanel.setBounds(0,0,643,523);
@@ -268,7 +266,7 @@ public class Menu extends javax.swing.JFrame {
     }
     
     public void updateArduinoChart() {
-        JFreeChart chart = ChartFactory.createLineChart("Luminosity", "Time", "Level", lumiDataset,PlotOrientation.VERTICAL, true, true, false);
+        JFreeChart chart = ChartFactory.createLineChart("Arduino", "Time", "ºC", arduinoDataset,PlotOrientation.VERTICAL, true, true, false);
 
         CategoryPlot catPlot = chart.getCategoryPlot();
         catPlot.setRangeGridlinePaint(Color.BLACK);
@@ -290,8 +288,8 @@ public class Menu extends javax.swing.JFrame {
     }
     
     /* ADD VALUES TO CHARTS */
-    public void addTemp(int value, String div) {
-        this.tempDataset.addValue(value,div, new Second());
+    public synchronized void addTemp(int value, String div) {
+        this.tempDataset.addValue(value,div, ""+new Second());
         //this.updateTempChart();
     }
     
@@ -338,7 +336,7 @@ public class Menu extends javax.swing.JFrame {
                         JOptionPane.showMessageDialog(new Frame(), "Dataset error!", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
-            }, 0, 3, TimeUnit.SECONDS);
+            }, 0, 10, TimeUnit.SECONDS);
         }
     }
     
