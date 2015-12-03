@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 public class RequestProcesserBehaviour extends CyclicBehaviour
 {
-    private final Agent agente;
+    private final ControllerAgent agente;
     public enum SensorType
     {
         TEMP {public String toString() {return "temp";}},
@@ -51,10 +51,10 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
     {
         ACLMessage msg = agente.receive(MessageTemplate.MatchPerformative( ACLMessage.REQUEST ));
         
-        if (msg != null && !ControllerAgent.convoIds.contains(msg.getConversationId()))
+        if (msg != null && !agente.hasRequestId(msg.getConversationId()))
         {
             System.out.println("Received message from "+msg.getSender()+". Content: "+msg.getContent());
-            ControllerAgent.convoIds.add(msg.getConversationId());
+            agente.saveRequestId(msg.getConversationId());
             
             // clears whitespaces
             String line = msg.getContent();

@@ -7,7 +7,22 @@ import java.util.ArrayList;
 public class ControllerAgent extends Agent
 {
     public static ArrayList<String> convoIds;
-
+    
+    public boolean hasRequestId(String id)
+    {
+        synchronized(convoIds){return convoIds.contains(id);}
+    }
+    
+    public void saveRequestId(String id)
+    {
+        synchronized(convoIds){convoIds.add(id);}
+    }
+    
+    public void removeRequestId(String id)
+    {
+        synchronized(convoIds){convoIds.remove(id);}
+    }
+    
     @Override
     protected void setup()
     {

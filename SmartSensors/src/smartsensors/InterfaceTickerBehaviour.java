@@ -42,7 +42,10 @@ public class InterfaceTickerBehaviour extends CyclicBehaviour
         ACLMessage msg = agente.receive(MessageTemplate.MatchPerformative( ACLMessage.PROPOSE ));
         
         if (msg != null)
-            refreshRate = Integer.parseInt(msg.getContent());
+        {
+            try {refreshRate = Integer.parseInt(msg.getContent());}
+            catch (NumberFormatException e) { e.printStackTrace(); }
+        }
         
         long currentTime = (new Date()).getTime();
         

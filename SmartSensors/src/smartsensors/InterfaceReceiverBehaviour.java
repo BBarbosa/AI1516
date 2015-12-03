@@ -134,12 +134,11 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         {
             //sensorName example: sensorType-div
             String type = agente.sensorTypes.get(sensorName);
-            for(String n : agente.sensorTypes.keySet())
-            System.out.println(n);
+
             switch(type) {
                 case "temp" : agente.menu.addTemp(Integer.parseInt(content), sensorName); break;
                 case "humi" : agente.menu.addHum(Integer.parseInt(content), sensorName); break;
-                case "mov" : agente.menu.addMov(Integer.parseInt(content), sensorName); break;
+                case "move" : agente.menu.addMov(Integer.parseInt(content), sensorName); break;
                 case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), sensorName); break;
                 case "lumi" : agente.menu.addLum(Integer.parseInt(content), sensorName); break;
                 case "arduino" : agente.menu.addArduino(Integer.parseInt(content), sensorName); break;
@@ -182,12 +181,13 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     @Override
     public void action()
     {
-        ACLMessage msg = agente.receive( or(
-            or( MessageTemplate.MatchPerformative( ACLMessage.INFORM ),
-                MessageTemplate.MatchPerformative( ACLMessage.NOT_UNDERSTOOD )),
-            or( MessageTemplate.MatchPerformative( ACLMessage.CONFIRM ),
-                MessageTemplate.MatchPerformative( ACLMessage.FAILURE ))
-            ));
+        ACLMessage msg = agente.receive(
+            or( or( MessageTemplate.MatchPerformative( ACLMessage.INFORM ),
+                    MessageTemplate.MatchPerformative( ACLMessage.NOT_UNDERSTOOD )),
+                or( MessageTemplate.MatchPerformative( ACLMessage.CONFIRM ),
+                    MessageTemplate.MatchPerformative( ACLMessage.FAILURE ))
+            )
+        );
         
         if (msg != null)
         {
@@ -261,7 +261,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 case ACLMessage.CONFIRM:
                     processStatus(requestContent);
                     break;
-                
+                    
                 case ACLMessage.FAILURE:
                     printLog("Failed request "+msg.getConversationId()+" - "
                             +requestContent+". Reason: "+msg.getContent());

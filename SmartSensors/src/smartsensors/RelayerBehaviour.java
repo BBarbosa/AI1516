@@ -9,9 +9,9 @@ import static jade.lang.acl.MessageTemplate.or;
 
 public class RelayerBehaviour extends CyclicBehaviour
 {
-    private Agent agente;
+    private ControllerAgent agente;
     
-    public RelayerBehaviour(Agent a)
+    public RelayerBehaviour(ControllerAgent a)
     {
         agente = a;
     }
@@ -44,7 +44,7 @@ public class RelayerBehaviour extends CyclicBehaviour
         if (msg != null && ControllerAgent.convoIds.contains(msg.getConversationId()))
         {
             System.out.println("Relaying request "+msg.getConversationId()+". Status: "+msg.getPerformative());
-            ControllerAgent.convoIds.remove(msg.getConversationId());
+            agente.removeRequestId(msg.getConversationId());
             sendMsg("interface", msg.getConversationId(), msg.getContent(), msg.getPerformative());
         }
         

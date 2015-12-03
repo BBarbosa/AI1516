@@ -1271,7 +1271,7 @@ public class Menu extends javax.swing.JFrame {
         switch(jComboBox1.getSelectedItem().toString()){
                 case "Temperature" : res="temp"; break;
                 case "Humidity" :  res="humi"; break;
-                case "Movement" :  res="mov"; break;
+                case "Movement" :  res="move"; break;
                 case "Smoke" :  res="smoke"; break;
                 case "Luminosity" :  res="lumi"; break;
                 }
