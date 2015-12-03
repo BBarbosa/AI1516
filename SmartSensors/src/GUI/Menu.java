@@ -18,6 +18,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Vector;
@@ -398,32 +399,45 @@ public class Menu extends javax.swing.JFrame {
 
     /* ADD VALUES TO CHARTS */
     public synchronized void addTemp(int value, String div) {
-        this.tempDataset.addValue(value,div, ""+new Second());
-        //this.updateTempChart();
+        if(this.tempDataset.getColumnCount() > 5) {
+            this.tempDataset.removeColumn(0);
+        }
+        this.tempDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
     public void addHum(int value, String div) {
-        this.humiDataset.addValue(value,div,""+ new Second());
-        //this.updateHumChart();
+        if(this.humiDataset.getColumnCount() > 5) {
+            this.humiDataset.removeColumn(0);
+        }
+        this.humiDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
     public void addMov(int value, String div) {
-        this.movDataset.addValue(value,div,""+ new Second());
-        //this.updateMovChart();
+        if(this.movDataset.getColumnCount() > 5) {
+            this.movDataset.removeColumn(0);
+        }
+        this.movDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
     public void addSmoke(int value, String div) {
-        this.smokeDataset.addValue(value,div,""+ new Second());
-        //this.updateSmokeChart();
+        if(this.smokeDataset.getColumnCount() > 5) {
+            this.smokeDataset.removeColumn(0);
+        }
+        this.smokeDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
     public void addLum(int value, String div) {
-        this.lumiDataset.addValue(value,div, new Second());
-        //this.updateLumChart();
+        if(this.lumiDataset.getColumnCount() > 5) {
+            this.lumiDataset.removeColumn(0);
+        }
+        this.lumiDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
     public void addArduino(int value, String div) {
-        this.arduinoDataset.addValue(value, div, new Second());
+        if(this.arduinoDataset.getColumnCount() > 5) {
+            this.arduinoDataset.removeColumn(0);
+        }
+        this.arduinoDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
     /* Chart auto update */
