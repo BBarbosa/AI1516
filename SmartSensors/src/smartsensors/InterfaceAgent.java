@@ -6,13 +6,13 @@ import jade.core.behaviours.ParallelBehaviour;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JButton;
-import javax.swing.JTextField;
 
 public class InterfaceAgent extends Agent
 {
     public Menu menu;
     private Integer currentConvoId;
     public HashMap<Integer, String> requestMap;
+    public HashMap<String, String> sensorTypes;
     public ArrayList<String> activeSensors;
     public ArrayList<Rule> automationProfile;
     public HashMap <String, JButton> labels;
@@ -43,6 +43,7 @@ public class InterfaceAgent extends Agent
         super.setup();
         System.out.println(this.getLocalName()+" starting!");
         requestMap = new HashMap<>();
+        sensorTypes = new HashMap<>();
         activeSensors = new ArrayList<>();
         currentConvoId = 0;
         labels =  new HashMap<>();

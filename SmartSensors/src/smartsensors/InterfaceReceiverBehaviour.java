@@ -64,6 +64,8 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                 defaultModel.addRow(newRow);  
                 this.agente.menu.getjTable1().setModel(defaultModel);
                 
+                agente.sensorTypes.put(agentNames[j], agentNames[0]);
+                
                 if (fst == 0){
                     JButton label = new JButton();
                     label.setBounds(padding, 0 , 40, 40);
@@ -128,18 +130,19 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         Matcher m = Pattern.compile("[0-9]").matcher(content);
         
         //meti a comentario pq me tava a crashar 
-        if (m.find() && sensorName.contains("-"))
+        if (m.find())
         {
             //sensorName example: sensorType-div
-            String type = sensorName.split("-")[0]; 
-            String div = sensorName.split("-")[1];
+            String type = agente.sensorTypes.get(sensorName);
+            for(String n : agente.sensorTypes.keySet())
+            System.out.println(n);
             switch(type) {
-                case "temp" : agente.menu.addTemp(Integer.parseInt(content), div); break;
-                case "humi" : agente.menu.addHum(Integer.parseInt(content), div); break;
-                case "mov" : agente.menu.addMov(Integer.parseInt(content), div); break;
-                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), div); break;
-                case "lumi" : agente.menu.addLum(Integer.parseInt(content), div); break;
-                case "arduino" : agente.menu.addArduino(Integer.parseInt(content), div); break;
+                case "temp" : agente.menu.addTemp(Integer.parseInt(content), sensorName); break;
+                case "humi" : agente.menu.addHum(Integer.parseInt(content), sensorName); break;
+                case "mov" : agente.menu.addMov(Integer.parseInt(content), sensorName); break;
+                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), sensorName); break;
+                case "lumi" : agente.menu.addLum(Integer.parseInt(content), sensorName); break;
+                case "arduino" : agente.menu.addArduino(Integer.parseInt(content), sensorName); break;
             }
         }
         
@@ -156,11 +159,11 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         
         Boolean checkboxValue = true;
         
-        if (tokens[1].equals("online")) 
+        if (tokens[1].equals("online"))
             agente.activeSensors.add(tokens[0]);
         else if (tokens[1].equals("shutdown")){
            agente.activeSensors.remove(tokens[0]);
-           
+           agente.sensorTypes.remove(tokens[0]);
            agente.labels.get(tokens[0]).setVisible(false);
         }
         else
@@ -202,54 +205,54 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                         String[] aux;
                         aux =  requestContent.split("\\.");
                         
-                    JButton label = new JButton();
-                    label.setBounds(100, 0 , 40, 40);
-                    label.setName(aux[1]);
-                    
-                    Path path = Paths.get("images/"+aux[2]+".png");
+                        JButton label = new JButton();
+                        label.setBounds(100, 0 , 40, 40);
+                        label.setName(aux[1]);
 
-                    if (Files.exists(path)) {
-                    // file exist
-                        ImageIcon img;
-       
-                        img = new ImageIcon("images/"+aux[2]+".png");
+                        Path path = Paths.get("images/"+aux[2]+".png");
 
-                        label.setIcon(img);
-                    }
-                    
-                    else{
-                        ImageIcon img;
-       
-                        img = new ImageIcon("images/sensor.png");
+                        if (Files.exists(path)) {
+                        // file exist
+                            ImageIcon img;
 
-                        label.setIcon(img);
-                   }
+                            img = new ImageIcon("images/"+aux[2]+".png");
+
+                            label.setIcon(img);
+                        }
+
+                        else{
+                            ImageIcon img;
+
+                            img = new ImageIcon("images/sensor.png");
+
+                            label.setIcon(img);
+                        }
                     
             
-                    label.addMouseMotionListener(new MouseAdapter(){
+                        label.addMouseMotionListener(new MouseAdapter(){
 
-                            @Override
-                            public void mouseDragged(MouseEvent E)
-                            {
-                               int X=E.getX()+label.getX();
-                               int Y=E.getY()+label.getY();
-                               label.setBounds(X,Y,150,60);
-                            }
-                        });
+                                @Override
+                                public void mouseDragged(MouseEvent E)
+                                {
+                                   int X=E.getX()+label.getX();
+                                   int Y=E.getY()+label.getY();
+                                   label.setBounds(X,Y,150,60);
+                                }
+                            });
 
 
-                    this.agente.menu.getjPanel1().add(label);
-                    label.setVisible(false);
-                    this.agente.labels.put((String) aux[1], label);
-                         DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable1().getModel();
-                            Vector newRow = new Vector();
-                            newRow.add(aux[1]);
-                            newRow.add(aux[2]);
-                            newRow.add(false);
-                            defaultModel.addRow(newRow);
-                            this.agente.menu.getjTable1().setModel(defaultModel);
+                        this.agente.menu.getjPanel1().add(label);
+                        label.setVisible(false);
+                        this.agente.labels.put((String) aux[1], label);
+                             DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable1().getModel();
+                                Vector newRow = new Vector();
+                                newRow.add(aux[1]);
+                                newRow.add(aux[2]);
+                                newRow.add(false);
+                                defaultModel.addRow(newRow);
+                                this.agente.menu.getjTable1().setModel(defaultModel);
                             
-
+                        agente.sensorTypes.put(aux[1],aux[2]);
                     }
                     else
                         processSensorValue(msg.getContent(), Integer.parseInt(msg.getConversationId()));
