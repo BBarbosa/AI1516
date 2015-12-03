@@ -158,6 +158,11 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         
         if (tokens[1].equals("online")) 
             agente.activeSensors.add(tokens[0]);
+        else if (tokens[1].equals("shutdown")){
+           agente.activeSensors.remove(tokens[0]);
+           
+           agente.labels.get(tokens[0]).setVisible(false);
+        }
         else
         {
             agente.activeSensors.remove(tokens[0]);

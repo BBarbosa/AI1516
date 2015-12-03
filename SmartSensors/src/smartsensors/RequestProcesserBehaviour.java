@@ -143,6 +143,8 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                     sendMsg(agentName, msg.getConversationId(), "turnon", ACLMessage.REQUEST);
                 else if (line.contains("turnoff"))
                     sendMsg(agentName, msg.getConversationId(), "turnoff", ACLMessage.REQUEST);
+                else if (line.contains("shutdown"))
+                    sendMsg(agentName, msg.getConversationId(), "shutdown", ACLMessage.REQUEST);
                 else
                     sendMsg("interface", msg.getConversationId(),"Unrecognized requested operation!", ACLMessage.NOT_UNDERSTOOD);
             }
