@@ -96,13 +96,13 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                             {
                                int X=E.getX()+label.getX();
                                int Y=E.getY()+label.getY();
-                               label.setBounds(X,Y,100,40);
+                               label.setBounds(X,Y,150,60);
                             }
                         });
 
 
                     this.agente.menu.getjPanel1().add(label);
-                    label.setVisible(true);
+                    label.setVisible(false);
                     this.agente.labels.put((String) agentNames[j], label);
                 }
                
@@ -123,7 +123,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         System.out.println("SENSOR:"+sensorName);
         System.out.println("SENSOR VALUE: "+content);
         
-        this.agente.labels.get(sensorName).setText(content);
+        this.agente.labels.get(sensorName).setText(sensorName+" = "+content);
 
         Matcher m = Pattern.compile("[0-9]").matcher(content);
         
@@ -193,6 +193,59 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                         processScan(msg.getContent());
                     else if (requestContent.contains("rule"))
                         printLog(requestContent.split("[.]")[1]);
+                    else if (requestContent.contains("create")){
+                        String[] aux;
+                        aux =  requestContent.split("\\.");
+                        
+                    JButton label = new JButton();
+                    label.setBounds(100, 0 , 40, 40);
+                    label.setName(aux[1]);
+                    
+                    Path path = Paths.get("images/"+aux[2]+".png");
+
+                    if (Files.exists(path)) {
+                    // file exist
+                        ImageIcon img;
+       
+                        img = new ImageIcon("images/"+aux[2]+".png");
+
+                        label.setIcon(img);
+                    }
+                    
+                    else{
+                        ImageIcon img;
+       
+                        img = new ImageIcon("images/sensor.png");
+
+                        label.setIcon(img);
+                   }
+                    
+            
+                    label.addMouseMotionListener(new MouseAdapter(){
+
+                            @Override
+                            public void mouseDragged(MouseEvent E)
+                            {
+                               int X=E.getX()+label.getX();
+                               int Y=E.getY()+label.getY();
+                               label.setBounds(X,Y,150,60);
+                            }
+                        });
+
+
+                    this.agente.menu.getjPanel1().add(label);
+                    label.setVisible(false);
+                    this.agente.labels.put((String) aux[1], label);
+                         DefaultTableModel defaultModel = (DefaultTableModel) this.agente.menu.getjTable1().getModel();
+                            Vector newRow = new Vector();
+                            newRow.add(aux[1]);
+                            newRow.add(aux[2]);
+                            newRow.add(false);
+                            defaultModel.addRow(newRow);
+                            this.agente.menu.getjTable1().setModel(defaultModel);
+                            
+
+                    }
                     else
                         processSensorValue(msg.getContent(), Integer.parseInt(msg.getConversationId()));
                     break;

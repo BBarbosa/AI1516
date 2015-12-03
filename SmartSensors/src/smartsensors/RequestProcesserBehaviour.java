@@ -61,7 +61,7 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
             Pattern r = Pattern.compile("\\s+");
             Matcher m = r.matcher(line);
             line = m.replaceAll("");
-            
+            String aux = null;
             //Create new Agent
             boolean created = false;
             if (line.contains("create")){
@@ -90,7 +90,9 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                     AgentController a = c.createNewAgent( name, type, null );
                     a.start();
                     created = true;
+                    aux = "."+name+"."+type;
                     System.out.println("Agent "+name+" created!");
+                    
                 }
                 catch (Exception e){ System.out.println(e); }
             }
@@ -126,7 +128,6 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                         availableAgents += "."+dfad.getName().getLocalName();
                 }
             }
-            
             // if target agent is no longer availabe, inform interface agent
             if (availableAgents.contains(agentName) && !created)
             {            
@@ -145,6 +146,7 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                 else
                     sendMsg("interface", msg.getConversationId(),"Unrecognized requested operation!", ACLMessage.NOT_UNDERSTOOD);
             }
+            else if(created) sendMsg("interface", msg.getConversationId(), "create"+aux, ACLMessage.INFORM);
             else
                 sendMsg("interface", msg.getConversationId(), "Specified agent name ("+agentName+") unavailable!", ACLMessage.FAILURE);
         }
