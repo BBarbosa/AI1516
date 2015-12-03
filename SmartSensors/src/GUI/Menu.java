@@ -84,7 +84,7 @@ public class Menu extends javax.swing.JFrame {
      * Creates new form Menu
      */
     public Menu() {
-                
+
 
      DefaultTableCellRenderer dtcr = new DefaultTableCellRenderer();
      dtcr.setHorizontalAlignment(DefaultTableCellRenderer.CENTER);
@@ -232,9 +232,9 @@ public class Menu extends javax.swing.JFrame {
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "Delete");
         im.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), "Delete");
         am.put("Delete", deleteAction);
-        
+
         //key table 1
-        
+
         InputMap im2 = jTable1.getInputMap(JTable.WHEN_FOCUSED);
         ActionMap am2 = jTable1.getActionMap();
 
@@ -246,7 +246,7 @@ public class Menu extends javax.swing.JFrame {
                 if (selRow<0){
                     return;
                 }
-                
+
                 sendMsg(""+jTable1.getValueAt(selRow, 0)+".shutdown");
                 defaultModel.removeRow(jTable1.getSelectedRow());
                 agente.menu.getjTable1().setModel(defaultModel);
@@ -257,9 +257,9 @@ public class Menu extends javax.swing.JFrame {
         im2.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "Delete");
         im2.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), "Delete");
         am2.put("Delete", deleteAction2);
-        
+
         //key table 4
-        
+
         InputMap im4 = jTable4.getInputMap(JTable.WHEN_FOCUSED);
         ActionMap am4 = jTable4.getActionMap();
 
@@ -271,18 +271,18 @@ public class Menu extends javax.swing.JFrame {
                 if (selRow<0){
                     return;
                 }
-                
+
                 //remover regra
                 int i = 0;
-                
+
                 while(i < getjTable4().getRowCount()){
-                    
+
                     if(getjTable4().getValueAt(i, 1).toString().equals(agente.automationProfile.get(i).ruleString())){
-                       agente.automationProfile.remove(i); 
+                       agente.automationProfile.remove(i);
                        break;
                     }
                 }
-                
+
                 defaultModel.removeRow(jTable4.getSelectedRow());
                 agente.menu.getjTable4().setModel(defaultModel);
             }
@@ -295,16 +295,16 @@ public class Menu extends javax.swing.JFrame {
 
         //formats
         this.jTable4.getColumnModel().getColumn(0).setMaxWidth(75);
-    
+
         this.jTable1.getColumnModel().getColumn(0).setCellRenderer( dtcr);
         this.jTable1.getColumnModel().getColumn(1).setCellRenderer( dtcr);
-   
-        
+
+
         this.jTable2.getColumnModel().getColumn(0).setCellRenderer( dtcr);
         this.jTable2.getColumnModel().getColumn(1).setCellRenderer( dtcr);
         this.jTable2.getColumnModel().getColumn(2).setCellRenderer( dtcr);
-        
-        
+
+
         this.jTable4.getColumnModel().getColumn(1).setCellRenderer( dtcr);
     }
 
@@ -595,7 +595,20 @@ public class Menu extends javax.swing.JFrame {
         jScrollPane4 = new javax.swing.JScrollPane();
         jTable3 = new javax.swing.JTable();
         jTabbedPane1 = new javax.swing.JTabbedPane();
-        jPanel1 = new javax.swing.JPanel();
+        ImageIcon image = new ImageIcon("images/house_plan_1.jpg");
+
+
+ jPanel1 = new javax.swing.JPanel(){
+            @Override
+            public void paintComponent(Graphics g) {
+              g.drawImage(image.getImage(), 0, 40, 616, 510, null);
+              super.paintComponent(g);
+
+            }
+
+          };
+
+          jPanel1.setOpaque(false);
         jPanel2 = new javax.swing.JPanel();
         jTabbedPane2 = new javax.swing.JTabbedPane();
         jPanel4 = new javax.swing.JPanel();
