@@ -22,7 +22,7 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
         TEMP {public String toString() {return "temp";}},
         HUMI {public String toString() {return "humi";}},
         MOVE {public String toString() {return "move";}},
-        LUX {public String toString() {return "lux";}},
+        LUX {public String toString() {return "lumi";}},
         SMOKE {public String toString() {return "smoke";}},
         ARDUINO {public String toString() {return "arduino";}} 
     }
@@ -78,7 +78,7 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                 else if(type.equals("move")){
                     type = "smartsensors.MovementSensor";
                 }
-                else if(type.equals("lux")){
+                else if(type.equals("lumi")){
                     type = "smartsensors.LuxSensor";
                 }
                 else if(type.equals("smoke")){

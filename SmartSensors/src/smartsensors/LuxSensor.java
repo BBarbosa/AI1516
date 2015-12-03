@@ -34,7 +34,7 @@ public class LuxSensor extends Agent{
         dfd.setName(getAID());
         ServiceDescription sd = new ServiceDescription();
         sd.setName(getLocalName());
-        sd.setType("lux");
+        sd.setType("lumi");
         dfd.addServices(sd);
 
         try{ DFService.register(this, dfd );}
