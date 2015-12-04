@@ -26,7 +26,10 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     private InterfaceAgent agente;
     private int sensorsToUpdate;
     private HashMap<String, Integer> valuesToUpdate;
+    
     public int fst;
+    
+    
     
     public InterfaceReceiverBehaviour(InterfaceAgent a)
     {
@@ -34,6 +37,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         agente = a;
         sensorsToUpdate = 0;
         valuesToUpdate = new HashMap<>();
+        
     }
 
     public void printLog(String txt)
@@ -175,7 +179,17 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         else if (tokens[1].equals("shutdown")){
            agente.activeSensors.remove(tokens[0]);
            agente.sensorTypes.remove(tokens[0]);
+          
            agente.labels.get(tokens[0]).setVisible(false);
+           this.agente.sensorsToShutDown--;
+           System.out.println("senss to shut ::: "+this.agente.sensorsToShutDown);
+           if(this.agente.sensorsToShutDown == 0 ){
+              
+               System.out.println("hgjkhgjhgjk::: "+this.agente.sensorsToShutDown);
+               System.exit(0);
+           }
+           
+           
         }
         else
         {

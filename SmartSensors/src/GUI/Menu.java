@@ -17,6 +17,8 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.AbstractAction;
@@ -284,6 +286,26 @@ public class Menu extends javax.swing.JFrame {
 
 
         this.jTable4.getColumnModel().getColumn(1).setCellRenderer( dtcr);
+        //close event
+
+        this.addWindowListener(new java.awt.event.WindowAdapter() {
+    @Override
+    public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+
+            agente.sensorsToShutDown = jTable1.getRowCount()-1;
+
+            for(int i=0; i<jTable1.getRowCount();i++){
+                sendMsg(jTable1.getValueAt(i, 0).toString()+".shutdown");
+
+            }
+
+
+
+    }
+});
+
+
+
     }
 
     /* UPDATE CHARTS */
@@ -651,7 +673,7 @@ public class Menu extends javax.swing.JFrame {
         ));
         jScrollPane4.setViewportView(jTable3);
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DO_NOTHING_ON_CLOSE);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);

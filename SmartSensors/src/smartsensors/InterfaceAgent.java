@@ -16,6 +16,7 @@ public class InterfaceAgent extends Agent
     public ArrayList<String> activeSensors;
     public ArrayList<Rule> automationProfile;
     public HashMap <String, JButton> labels;
+    public int sensorsToShutDown;
     
     public synchronized int getNewConvoId()
     {
@@ -48,6 +49,7 @@ public class InterfaceAgent extends Agent
         currentConvoId = 0;
         labels =  new HashMap<>();
         automationProfile = new ArrayList<>();
+        sensorsToShutDown = -99;
         
         ParallelBehaviour par = new ParallelBehaviour(this, ParallelBehaviour.WHEN_ANY);
         par.addSubBehaviour(new InterfaceRequesterBehaviour(this));
