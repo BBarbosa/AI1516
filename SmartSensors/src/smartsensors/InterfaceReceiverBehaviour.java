@@ -11,25 +11,29 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Vector;
 import javax.swing.table.DefaultTableModel;
-import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 
 public class InterfaceReceiverBehaviour extends CyclicBehaviour
 {
     private InterfaceAgent agente;
+    private int sensorsToUpdate;
+    private HashMap<String, Integer> valuesToUpdate;
     public int fst;
     
     public InterfaceReceiverBehaviour(InterfaceAgent a)
     {
         fst = 0;
         agente = a;
+        sensorsToUpdate = 0;
+        valuesToUpdate = new HashMap<>();
     }
 
     public void printLog(String txt)
@@ -117,6 +121,23 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         printLog("Scanned Sensors!");
     }
     
+    public void updateCharts()
+    {
+        for (Entry<String,Integer> e: valuesToUpdate.entrySet())
+        {
+            String type = agente.sensorTypes.get(e.getKey());
+
+            switch(type) {
+                case "temp" : agente.menu.addTemp(e.getValue(), e.getKey()); break;
+                case "humi" : agente.menu.addHum(e.getValue(), e.getKey()); break;
+                case "move" : agente.menu.addMov(e.getValue(), e.getKey()); break;
+                case "smoke" : agente.menu.addSmoke(e.getValue(), e.getKey()); break;
+                case "lumi" : agente.menu.addLum(e.getValue(), e.getKey()); break;
+                case "arduino" : agente.menu.addArduino(e.getValue(), e.getKey()); break;
+            }
+        }
+    }
+    
     public void processSensorValue(String content, Integer id)
     {
         String sensorName = agente.requestMap.get(id).split("[.]")[0];
@@ -128,21 +149,12 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         this.agente.labels.get(sensorName).setText(sensorName+" = "+content);
 
         Matcher m = Pattern.compile("[0-9]").matcher(content);
+        valuesToUpdate.put(sensorName, (m.find()) ? Integer.parseInt(content) : null);
         
-        //meti a comentario pq me tava a crashar 
-        if (m.find())
+        if (++sensorsToUpdate >= agente.activeSensors.size())
         {
-            //sensorName example: sensorType-div
-            String type = agente.sensorTypes.get(sensorName);
-
-            switch(type) {
-                case "temp" : agente.menu.addTemp(Integer.parseInt(content), sensorName); break;
-                case "humi" : agente.menu.addHum(Integer.parseInt(content), sensorName); break;
-                case "move" : agente.menu.addMov(Integer.parseInt(content), sensorName); break;
-                case "smoke" : agente.menu.addSmoke(Integer.parseInt(content), sensorName); break;
-                case "lumi" : agente.menu.addLum(Integer.parseInt(content), sensorName); break;
-                case "arduino" : agente.menu.addArduino(Integer.parseInt(content), sensorName); break;
-            }
+            updateCharts();
+            sensorsToUpdate = 0;
         }
         
         // refresh rule conditions with new value
@@ -263,6 +275,10 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                     break;
                     
                 case ACLMessage.FAILURE:
+                    if (msg.getContent().contains("timeout"))
+                        printLog("Failed request "+msg.getConversationId()+" - "
+                            +requestContent+". Reason: Request timeout (10 seconds)");
+                    
                     printLog("Failed request "+msg.getConversationId()+" - "
                             +requestContent+". Reason: "+msg.getContent());
                     if (requestContent.contains("value"))

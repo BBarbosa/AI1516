@@ -1,23 +1,15 @@
 package GUI;
 
 import jade.core.AID;
-import jade.core.Agent;
-import jade.core.AgentContainer;
 import jade.lang.acl.ACLMessage;
-import jade.wrapper.AgentController;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
 import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.Label;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,12 +17,8 @@ import java.util.Vector;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javafx.scene.chart.ValueAxis;
-import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ActionMap;
@@ -38,7 +26,6 @@ import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -47,25 +34,18 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
-import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
-import org.jfree.chart.plot.XYPlot;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.data.time.Second;
-import org.jfree.data.time.TimeSeries;
-import org.jfree.data.time.TimeSeriesCollection;
 import smartsensors.InterfaceAgent;
 import smartsensors.ProfileManager;
 import smartsensors.Rule;
 import smartsensors.RuleCondition;
-import smartsensors.TempSensor;
 
 public class Menu extends javax.swing.JFrame {
 
@@ -101,9 +81,6 @@ public class Menu extends javax.swing.JFrame {
         this.lumiDataset = new DefaultCategoryDataset();
         this.arduinoDataset = new DefaultCategoryDataset();
 
-        /* start thread */
-//        chartUpdate chartUp = new chartUpdate(this);
-//        new Thread(chartUp).start();
         this.updateAllCharts();
 
             ImageIcon img;
@@ -398,7 +375,7 @@ public class Menu extends javax.swing.JFrame {
     }
 
     /* ADD VALUES TO CHARTS */
-    public synchronized void addTemp(int value, String div) {
+    public synchronized void addTemp(Integer value, String div) {
         if(this.tempDataset.getColumnCount() > 5) {
             this.tempDataset.removeColumn(0);
         }

@@ -1,7 +1,6 @@
 package smartsensors;
 
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.domain.DFService;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
@@ -11,6 +10,7 @@ import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
 import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -43,6 +43,9 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
 
         msg.setContent(line);
 
+        if (agentName.equals("interface"))
+            agente.removeRequestId(convoId);
+        
         myAgent.send(msg);
     }
     
@@ -151,9 +154,24 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
             else if(created) sendMsg("interface", msg.getConversationId(), "create"+aux, ACLMessage.INFORM);
             else
                 sendMsg("interface", msg.getConversationId(), "Specified agent name ("+agentName+") unavailable!", ACLMessage.FAILURE);
+            
+            synchronized (agente.convoIds)
+            {
+                String toRemove = null;
+                for (Entry<String,Long> e : agente.convoIds.entrySet())
+                    if (System.currentTimeMillis() - e.getValue() > 10000)
+                    {
+                        System.out.println("Sent: "+e.getKey()+" "+e.getValue()+" "+System.currentTimeMillis());
+                        sendMsg("interface", e.getKey(), "timeout", ACLMessage.FAILURE);
+                        toRemove = e.getKey();
+                    }
+
+                if (toRemove != null)
+                    agente.removeRequestId(toRemove);
+            }
         }
         
-        block();
+        block(10000);
     }
     
 }

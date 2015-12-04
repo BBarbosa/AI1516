@@ -1,7 +1,6 @@
 package smartsensors;
 
 import jade.core.AID;
-import jade.core.Agent;
 import jade.core.behaviours.CyclicBehaviour;
 import jade.lang.acl.ACLMessage;
 import jade.lang.acl.MessageTemplate;
@@ -41,7 +40,7 @@ public class RelayerBehaviour extends CyclicBehaviour
                     MessageTemplate.MatchPerformative( ACLMessage.FAILURE ))
                 ));
 
-        if (msg != null && ControllerAgent.convoIds.contains(msg.getConversationId()))
+        if (msg != null && agente.hasRequestId(msg.getConversationId()))
         {
             System.out.println("Relaying request "+msg.getConversationId()+". Status: "+msg.getPerformative());
             agente.removeRequestId(msg.getConversationId());
