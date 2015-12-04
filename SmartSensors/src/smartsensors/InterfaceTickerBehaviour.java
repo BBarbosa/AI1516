@@ -59,11 +59,11 @@ public class InterfaceTickerBehaviour extends CyclicBehaviour
                 {
                     sendMsg("interface",ACLMessage.INFORM,"rule."+resAction);
                     if(resAction.equals("ligar led verde")){
-                        sendMsg("controller",ACLMessage.REQUEST,"arduino-Temp.turnon");
+                        sendMsg("controller",ACLMessage.REQUEST,"arduino.turnon");
                     }
                     else if(resAction.equals("ligar led vermelho"))
                     {
-                        sendMsg("controller",ACLMessage.REQUEST,"arduino-Temp.turnoff");
+                        sendMsg("controller",ACLMessage.REQUEST,"arduino.turnoff");
                     }
                 }
             }

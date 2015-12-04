@@ -275,7 +275,7 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
                     break;
                     
                 case ACLMessage.FAILURE:
-                    if (msg.getContent().contains("timeout"))
+                    if (msg.getContent() != null && msg.getContent().contains("timeout"))
                         printLog("Failed request "+msg.getConversationId()+" - "
                             +requestContent+". Reason: Request timeout (10 seconds)");
                     

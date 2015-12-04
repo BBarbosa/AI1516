@@ -382,35 +382,35 @@ public class Menu extends javax.swing.JFrame {
         this.tempDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
-    public void addHum(int value, String div) {
+    public void addHum(Integer value, String div) {
         if(this.humiDataset.getColumnCount() > 5) {
             this.humiDataset.removeColumn(0);
         }
         this.humiDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
-    public void addMov(int value, String div) {
+    public void addMov(Integer value, String div) {
         if(this.movDataset.getColumnCount() > 5) {
             this.movDataset.removeColumn(0);
         }
         this.movDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
-    public void addSmoke(int value, String div) {
+    public void addSmoke(Integer value, String div) {
         if(this.smokeDataset.getColumnCount() > 5) {
             this.smokeDataset.removeColumn(0);
         }
         this.smokeDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
-    public void addLum(int value, String div) {
+    public void addLum(Integer value, String div) {
         if(this.lumiDataset.getColumnCount() > 5) {
             this.lumiDataset.removeColumn(0);
         }
         this.lumiDataset.addValue(value,div, ""+new SimpleDateFormat("HH:mm:ss").format(new Date()));
     }
 
-    public void addArduino(int value, String div) {
+    public void addArduino(Integer value, String div) {
         if(this.arduinoDataset.getColumnCount() > 5) {
             this.arduinoDataset.removeColumn(0);
         }
