@@ -76,12 +76,8 @@ public class MovementSensor extends Agent {
                     {
                         System.out.println("sensor "+myAgent.getLocalName()+" exiting...");
                         setFinished(true);
-                        if(isFinished()==true){
-                            System.out.println("Vai encerrar");
-                            myAgent.doDelete();
-                            reply.setPerformative(ACLMessage.CONFIRM);
-                            myAgent.send(reply);
-                        }
+                        reply.setPerformative(ACLMessage.CONFIRM);
+                        myAgent.send(reply);
                     }
 
                     if (msg.getContent().equals("online"))

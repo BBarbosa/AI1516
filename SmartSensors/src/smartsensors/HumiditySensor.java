@@ -12,7 +12,7 @@ import java.util.Random;
 public class HumiditySensor extends Agent {
     private boolean sensorState = false;
     private boolean finished = false;
-    private int last = new Random().nextInt(120);
+    private int last = new Random().nextInt(100);
 
     @Override
     protected void takeDown()
@@ -87,12 +87,8 @@ public class HumiditySensor extends Agent {
                     {
                         System.out.println("sensor "+myAgent.getLocalName()+" exiting...");
                         setFinished(true);
-                        if(isFinished()==true){
-                            System.out.println("Vai encerrar");
-                            myAgent.doDelete();
-                            reply.setPerformative(ACLMessage.CONFIRM);
-                            myAgent.send(reply);
-                        }
+                        reply.setPerformative(ACLMessage.CONFIRM);
+                        myAgent.send(reply);
                     }
 
                     if (msg.getContent().equals("online"))
@@ -131,20 +127,28 @@ public class HumiditySensor extends Agent {
                     {
                         if (isSensorState())
                         {
-                            int i = getLast() + new Random().nextInt(5) - new Random().nextInt(5);
-                            setLast(i);
-                            if (i < 0 || i > 100)
+                            int rand = new Random().nextInt(10);
+                            if (rand >= 9)
                             {
-                                setLast(new Random().nextInt(120));
                                 reply.setContent("XXXXX");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
-                            else
-                            {
-                                reply.setContent(i + "");
-                                reply.setPerformative(ACLMessage.INFORM);
-                                myAgent.send(reply);
+                            else {
+                                int i = getLast() + new Random().nextInt(5) - new Random().nextInt(5);
+                                if(i < 0 || i > 100)
+                                {
+                                    setLast(new Random().nextInt(100));
+                                    reply.setContent(getLast() + "");
+                                    reply.setPerformative(ACLMessage.INFORM);
+                                    myAgent.send(reply);
+                                }
+                                else {
+                                    setLast(i);
+                                    reply.setContent(i + "");
+                                    reply.setPerformative(ACLMessage.INFORM);
+                                    myAgent.send(reply);
+                                }
                             }
                         }
                         else

@@ -13,7 +13,7 @@ public class TempSensor extends Agent
 {
     private boolean sensorState = false;
     private boolean finished = false;
-    private int last = new Random().nextInt(60);
+    private int last = new Random().nextInt(40);
 
     @Override
     protected void takeDown()
@@ -87,12 +87,8 @@ public class TempSensor extends Agent
                     {
                         System.out.println("sensor "+myAgent.getLocalName()+" exiting...");
                         setFinished(true);
-                        if(isFinished()==true){
-                            System.out.println("Vai encerrar");
-                            myAgent.doDelete();
-                            reply.setPerformative(ACLMessage.CONFIRM);
-                            myAgent.send(reply);
-                        }
+                        reply.setPerformative(ACLMessage.CONFIRM);
+                        myAgent.send(reply);
                     }
                    
                     if (msg.getContent().equals("online"))
@@ -132,21 +128,29 @@ public class TempSensor extends Agent
                         System.out.println(isSensorState());
                         if (isSensorState())
                         {
-                            //int randomNum = Math.abs(new Random().nextInt() % 100);
-                            int i = getLast() + new Random().nextInt(5) - new Random().nextInt(5);
-                            setLast(i);
-                            if (i < -10 || (i >= 50 && i <= 60))
+                            //Erro
+                            int rand = new Random().nextInt(10);
+                            if (rand >= 9)
                             {
-                                setLast(new Random().nextInt(60));
                                 reply.setContent("XXXXX");
                                 reply.setPerformative(ACLMessage.INFORM);
                                 myAgent.send(reply);
                             }
-                            else
-                            {
-                                reply.setContent(i + "");
-                                reply.setPerformative(ACLMessage.INFORM);
-                                myAgent.send(reply);
+                            else {
+                                int i = getLast() + new Random().nextInt(5) - new Random().nextInt(5);
+                                if(i < -15 || i > 40)
+                                {
+                                    setLast(new Random().nextInt(40));
+                                    reply.setContent(getLast() + "");
+                                    reply.setPerformative(ACLMessage.INFORM);
+                                    myAgent.send(reply);
+                                }
+                                else {
+                                    setLast(i);
+                                    reply.setContent(i + "");
+                                    reply.setPerformative(ACLMessage.INFORM);
+                                    myAgent.send(reply);
+                                }
                             }
                         }
                         else
