@@ -75,7 +75,7 @@ public class RuleCondition implements Serializable
             int v = Integer.parseInt(inValue);
             previousEval = (isBigger) ? (v > value) : (v < value);
         }
-        catch (NumberFormatException e) {e.printStackTrace();}
+        catch (NumberFormatException e) {return;}
     }
     
     @Override

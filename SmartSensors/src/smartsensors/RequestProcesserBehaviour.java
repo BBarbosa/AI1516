@@ -161,7 +161,6 @@ public class RequestProcesserBehaviour extends CyclicBehaviour
                 for (Entry<String,Long> e : agente.convoIds.entrySet())
                     if (System.currentTimeMillis() - e.getValue() > 10000)
                     {
-                        System.out.println("Sent: "+e.getKey()+" "+e.getValue()+" "+System.currentTimeMillis());
                         sendMsg("interface", e.getKey(), "timeout", ACLMessage.FAILURE);
                         toRemove = e.getKey();
                     }

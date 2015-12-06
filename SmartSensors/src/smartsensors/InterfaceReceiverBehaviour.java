@@ -146,10 +146,6 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
     {
         String sensorName = agente.requestMap.get(id).split("[.]")[0];
         
-        // refresh value   
-        System.out.println("SENSOR:"+sensorName);
-        System.out.println("SENSOR VALUE: "+content);
-        
         this.agente.labels.get(sensorName).setText(sensorName+" = "+content);
 
         Matcher m = Pattern.compile("[0-9]").matcher(content);
@@ -182,14 +178,9 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
           
            agente.labels.get(tokens[0]).setVisible(false);
            this.agente.sensorsToShutDown--;
-           System.out.println("senss to shut ::: "+this.agente.sensorsToShutDown);
-           if(this.agente.sensorsToShutDown == 0 ){
-              
-               System.out.println("hgjkhgjhgjk::: "+this.agente.sensorsToShutDown);
+           
+           if(this.agente.sensorsToShutDown == 0 )
                System.exit(0);
-           }
-           
-           
         }
         else
         {
