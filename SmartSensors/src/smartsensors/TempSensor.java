@@ -138,7 +138,7 @@ public class TempSensor extends Agent
                             }
                             else {
                                 int i = getLast() + new Random().nextInt(5) - new Random().nextInt(5);
-                                if(i < -15 || i > 40)
+                                if(i < -10 || i > 40)
                                 {
                                     setLast(new Random().nextInt(40));
                                     reply.setContent(getLast() + "");
