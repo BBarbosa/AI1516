@@ -184,8 +184,11 @@ public class InterfaceReceiverBehaviour extends CyclicBehaviour
         }
         else
         {
-            agente.activeSensors.remove(tokens[0]);
-            checkboxValue = false;
+            if(!tokens[0].equals("arduino"))
+            {
+                agente.activeSensors.remove(tokens[0]);
+                checkboxValue = false;
+            }
         }
         
         JTable table = agente.menu.getjTable1();
